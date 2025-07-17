@@ -1,13 +1,13 @@
 {
   "files": {
     "main.css": "/biodigitalviz/static/css/main.3fd8ce82.css",
-    "main.js": "/biodigitalviz/static/js/main.67e6522a.js",
+    "main.js": "/biodigitalviz/static/js/main.d41147e3.js",
     "index.html": "/biodigitalviz/index.html",
     "main.3fd8ce82.css.map": "/biodigitalviz/static/css/main.3fd8ce82.css.map",
-    "main.67e6522a.js.map": "/biodigitalviz/static/js/main.67e6522a.js.map"
+    "main.d41147e3.js.map": "/biodigitalviz/static/js/main.d41147e3.js.map"
   },
   "entrypoints": [
     "static/css/main.3fd8ce82.css",
-    "static/js/main.67e6522a.js"
+    "static/js/main.d41147e3.js"
   ]
 }
