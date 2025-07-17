@@ -34,14 +34,14 @@ const BioDigitalSankeyApp = () => {
   ], []);
   
   const columnLabels = useMemo(() => [
-    'Organism', 'Trigger', 'Observable Output', 'Scale', 'Temporality', 'Organism → Digital Role', 'Digital → Organism Role'
+    'Organism', 'Trigger', 'Observable Output', 'Scale', 'Speed', 'Organism → Digital Role', 'Digital → Organism Role'
   ], []);
 
   // State
   const [data, setData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
   const [visibleColumns, setVisibleColumns] = useState([...allColumns]);
-  const [filters, setFilters] = useState({ organism: '', scale: '', temporality: '' });
+  const [filters, setFilters] = useState({ organism: '', scale: '', temporality: '', trigger: '', output: '' });
   const [showModal, setShowModal] = useState(false);
   const [showDetailModal, setShowDetailModal] = useState(false);
   const [detailContent, setDetailContent] = useState({ title: '', content: '' });
@@ -869,7 +869,7 @@ const BioDigitalSankeyApp = () => {
           highlightCompleteFlows(link.systems);
           tooltip
             .style('opacity', 1)
-            .html(`<strong>Flow: ${link.source.name} → ${link.target.name}</strong><br/>Systems: ${link.value}<br/>Click to explore connections`)
+            .html(`<strong>(${link.source.category}:${link.source.name}) + (${link.target.category}:${link.target.name})</strong><br/>Systems: ${link.value}<br/>Click to explore connections`)
             .style('left', (event.pageX + 10) + 'px')
             .style('top', (event.pageY - 28) + 'px');
         })
@@ -992,8 +992,12 @@ const BioDigitalSankeyApp = () => {
         (Array.isArray(d.scale) ? d.scale.includes(filters.scale) : false);
       const temporalityMatch = !filters.temporality || 
         (Array.isArray(d.temporality) ? d.temporality.includes(filters.temporality) : false);
+      const triggerMatch = !filters.trigger || 
+        (Array.isArray(d.trigger) ? d.trigger.includes(filters.trigger) : false);
+      const outputMatch = !filters.output || 
+        (Array.isArray(d.output) ? d.output.includes(filters.output) : false);
       
-      return organismMatch && scaleMatch && temporalityMatch;
+      return organismMatch && scaleMatch && temporalityMatch && triggerMatch && outputMatch;
     });
     setFilteredData(filtered);
   }, [data, filters]);
@@ -1046,7 +1050,7 @@ const BioDigitalSankeyApp = () => {
 
   // Utility Functions
   const resetView = () => {
-    setFilters({ organism: '', scale: '', temporality: '' });
+    setFilters({ organism: '', scale: '', temporality: '', trigger: '', output: '' });
     setVisibleColumns([...allColumns]);
   };
 
@@ -1135,6 +1139,8 @@ const BioDigitalSankeyApp = () => {
 
   const uniqueOrganisms = getOrderedValues(data, 'organism', 'organism');
   const uniqueScales = getOrderedValues(data, 'scale', 'scale');
+  const uniqueTriggers = getOrderedValues(data, 'trigger', 'trigger');
+  const uniqueOutputs = getOrderedValues(data, 'output', 'output');
   const uniqueTemporalities = getOrderedValues(data, 'temporality', 'temporality');
 
   // Component render
@@ -1168,7 +1174,7 @@ const BioDigitalSankeyApp = () => {
       {/* Filters */}
       <div className="filter-section">
         <div className="filter-group">
-          <label>Filter by Organism:</label>
+          <label>Filter by... Organism:</label>
           <select 
             className="filter-select"
             value={filters.organism} 
@@ -1180,7 +1186,31 @@ const BioDigitalSankeyApp = () => {
             ))}
           </select>
           
-          <label>Filter by Scale:</label>
+          <label>Trigger:</label>
+          <select 
+            className="filter-select"
+            value={filters.trigger} 
+            onChange={(e) => setFilters(prev => ({ ...prev, trigger: e.target.value }))}
+          >
+            <option value="">All Triggers</option>
+            {uniqueTriggers.map(trigger => (
+              <option key={trigger} value={trigger}>{trigger}</option>
+            ))}
+          </select>
+
+          <label>Organism Output:</label>
+          <select 
+            className="filter-select"
+            value={filters.output} 
+            onChange={(e) => setFilters(prev => ({ ...prev, output: e.target.value }))}
+          >
+            <option value="">All Outputs</option>
+            {uniqueOutputs.map(output => (
+              <option key={output} value={output}>{output}</option>
+            ))}
+          </select>
+
+          <label>Scale:</label>
           <select 
             className="filter-select"
             value={filters.scale} 
@@ -1192,13 +1222,13 @@ const BioDigitalSankeyApp = () => {
             ))}
           </select>
           
-          <label>Filter by Temporality:</label>
+          <label>Speed:</label>
           <select 
             className="filter-select"
             value={filters.temporality} 
             onChange={(e) => setFilters(prev => ({ ...prev, temporality: e.target.value }))}
           >
-            <option value="">All Temporalities</option>
+            <option value="">All Speeds</option>
             {uniqueTemporalities.map(temporality => (
               <option key={temporality} value={temporality}>{temporality}</option>
             ))}
@@ -1233,7 +1263,7 @@ const BioDigitalSankeyApp = () => {
 
       {/* Statistics */}
       <div className="stats">
-        Stats: {filteredData.length} Total Systems, {uniqueOrganisms.length} Unique Organisms
+        {filteredData.length} Total Systems, {uniqueOrganisms.length} Unique Organisms
       </div>
 
       {/* Add New System Modal */}
@@ -1314,7 +1344,7 @@ const BioDigitalSankeyApp = () => {
               </div>
               
               <div className="form-group">
-                <label className="form-label">Temporality:</label>
+                <label className="form-label">Speed:</label>
                 <select name="temporality" required className="form-select">
                   <option value="≤ 1 second">≤1 second</option>
                   <option value="≤ 1 minute">≤1 minute</option>
