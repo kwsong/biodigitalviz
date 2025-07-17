@@ -34,7 +34,7 @@ const BioDigitalSankeyApp = () => {
   ], []);
   
   const columnLabels = useMemo(() => [
-    'Organism', 'Trigger', 'Observable Output', 'Scale', 'Temporality', 'Role of Organism', 'Role of Digital'
+    'Organism', 'Trigger', 'Observable Output', 'Scale', 'Temporality', 'Organism → Digital Role', 'Digital → Organism Role'
   ], []);
 
   // State
@@ -462,7 +462,7 @@ const BioDigitalSankeyApp = () => {
     
     systems.forEach(system => {
       const imgTag = system.img_name
-        ? `<img src="./images/${system.img_name}" alt="${system.name}" class="system-thumb" />`
+        ? `<img src="${process.env.PUBLIC_URL}/images/${system.img_name}" alt="${system.name}" class="system-thumb" />`
         : '';
 
       content += `
