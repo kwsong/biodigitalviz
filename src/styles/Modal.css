@@ -1,0 +1,135 @@
+/* Modal styles using the same CSS variables from App.css */
+.modal-body {
+  padding: var(--spacing-lg);
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: var(--color-white);
+  border-radius: var(--border-radius-sm);
+  padding: 0;
+  max-width: 600px;
+  width: 90%;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-md);
+  border-bottom: 1px solid var(--color-gray-medium);
+}
+
+.modal-title {
+  margin: 0;
+  font-size: var(--font-lg);
+  color: var(--color-text-primary);
+}
+
+.modal-close {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: var(--color-text-muted);
+  transition: color var(--transition-fast);
+}
+
+.modal-close:hover {
+  color: var(--color-text-secondary);
+}
+
+/* Form styles */
+.form-group {
+  margin-bottom: var(--spacing-sm);
+  padding: 0 var(--spacing-md);
+}
+
+.form-group:last-child {
+  padding-bottom: var(--spacing-sm);
+}
+
+.form-label {
+  display: block;
+  margin-bottom: var(--spacing-xs);
+  color: var(--color-text-secondary);
+}
+
+.form-input,
+.form-select {
+  width: 100%;
+  padding: var(--spacing-xs);
+  border: 1px solid var(--color-gray-medium);
+  border-radius: var(--border-radius-sm);
+  box-sizing: border-box;
+  transition: border-color var(--transition-fast);
+}
+
+.form-input:focus,
+.form-select:focus {
+  outline: none;
+}
+
+.form-input[type="checkbox"] {
+  width: auto;
+}
+
+/* System detail styles */
+.system-detail {
+  background: var(--color-gray-light);
+  font-size: var(--font-base);
+  padding: var(--spacing-sm);
+  border-radius: var(--border-radius-sm);
+  margin-bottom: var(--spacing-md);
+  border: 2px dotted var(--color-primary);
+}
+
+.system-detail h4 {
+  margin: 0 0 var(--spacing-sm) 0;
+}
+
+.system-detail-grid {
+  display: grid;
+  grid-template-columns: 0.3fr 1fr 1fr;
+  gap: var(--spacing-sm);
+}
+
+.system-detail-grid p {
+  margin: var(--spacing-xs) 0;
+  font-size: var(--font-sm);
+}
+
+/* Responsive design for mobile */
+@media (max-width: 768px) {
+  .system-detail-grid {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-xs);
+  }
+  
+  .modal-content {
+    width: 95%;
+    max-height: 90vh;
+  }
+  
+  .form-group {
+    padding: 0 var(--spacing-sm);
+  }
+  
+  .form-group:last-child {
+    padding-bottom: var(--spacing-sm);
+  }
+}
