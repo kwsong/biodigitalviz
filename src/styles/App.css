@@ -73,10 +73,12 @@ body, html {
   background: var(--color-primary);
   color: var(--color-white);
   border: none;
-  padding: var(--spacing-sm) var(--spacing-md);
   border-radius: var(--border-radius-sm);
   cursor: pointer;
   transition: background-color var(--transition-fast);
+  padding: var(--spacing-xs);
+  border-radius: 4px;
+  font-size: var(--font-md);
 }
 
 .btn:hover {
@@ -145,6 +147,7 @@ body, html {
   border: 1px solid var(--color-gray-medium);
   border-radius: var(--border-radius-sm);
   background: var(--color-white);
+  color: var(--color-text-secondary);
 }
 
 /* Column controls */

@@ -25,7 +25,8 @@ const FIELD_MAPPING = {
   'Trigger': 'trigger', 
   'Observable Output of organism': 'output',
   'Scale': 'scale',
-  'Speed of reaction': 'temporality',
+  'Speed of notable reaction': 'temporality',
+  'Temporal quality': 'temporality2',
   'Role of organism for digital': 'role-organism',
   'Role of digital for organism': 'role-digital',
   'Evolution over time': 'evolution'
@@ -36,19 +37,21 @@ const BioDigitalSankeyApp = () => {
   const allColumns = useMemo(() => {
     // Get internal field names that should be used in the visualization
     // Exclude 'id' and non-visualization fields like 'name', 'author', etc.
-    const visualizationFields = ['organism', 'trigger', 'output', 'scale', 'temporality', 'role-organism', 'role-digital'];
+    const visualizationFields = ['organism', 'trigger', 'output', 'scale', 'temporality', 'temporality2', 'role-organism', 'role-digital'];
     return visualizationFields.filter(field => Object.values(FIELD_MAPPING).includes(field));
   }, []);
   
   const columnLabels = useMemo(() => [
-    'Organism', 'Trigger', 'Observable Output', 'Scale', 'Speed', 'Organism → Digital Role', 'Digital → Organism Role'
+    'Organism', 'Trigger', 'Observable Output', 'Scale', 'Speed', 'Temporal Pattern', 'Organism → Digital Role', 'Digital → Organism Role'
   ], []);
 
   // State
   const [data, setData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
   const [visibleColumns, setVisibleColumns] = useState([...allColumns]);
-  const [filters, setFilters] = useState({ organism: '', scale: '', temporality: '', trigger: '', output: '' });
+  const [activeFilters, setActiveFilters] = useState([]);
+  const [selectedFilterColumn, setSelectedFilterColumn] = useState('');
+  const [selectedFilterValue, setSelectedFilterValue] = useState('');
   const [showModal, setShowModal] = useState(false);
   const [showDetailModal, setShowDetailModal] = useState(false);
   const [detailContent, setDetailContent] = useState({ title: '', content: '' });
@@ -123,7 +126,7 @@ const BioDigitalSankeyApp = () => {
             const organismValues = normalizeToArray(value);
             const isGMO = fields[Object.keys(FIELD_MAPPING).find(key => FIELD_MAPPING[key] === 'gmo')];
             system[internalField] = organismValues.map(org => `${org}${isGMO ? ' (gmo)' : ''}`);
-          } else if (['trigger', 'output', 'scale', 'temporality', 'role-organism', 'role-digital'].includes(internalField)) {
+          } else if (['trigger', 'output', 'scale', 'temporality', 'temporality2', 'role-organism', 'role-digital'].includes(internalField)) {
             // Array fields
             system[internalField] = normalizeToArray(value);
           } else if (['author', 'img_name', 'url'].includes(internalField)) {
@@ -166,6 +169,39 @@ const BioDigitalSankeyApp = () => {
       return false;
     }
   }, [loadFromAirtable]);
+
+  // Add filters
+  const addFilter = () => {
+    if (selectedFilterColumn && selectedFilterValue) {
+      const newFilter = {
+        id: Date.now(),
+        column: selectedFilterColumn,
+        value: selectedFilterValue,
+        label: `${columnLabels[allColumns.indexOf(selectedFilterColumn)]}: ${selectedFilterValue}`
+      };
+      
+      const exists = activeFilters.some(f => f.column === selectedFilterColumn && f.value === selectedFilterValue);
+      if (!exists) {
+        setActiveFilters(prev => [...prev, newFilter]);
+      }
+      
+      setSelectedFilterColumn('');
+      setSelectedFilterValue('');
+    }
+  };
+
+  const removeFilter = (filterId) => {
+    setActiveFilters(prev => prev.filter(f => f.id !== filterId));
+  };
+
+  const clearAllFilters = () => {
+    setActiveFilters([]);
+  };
+
+  const getAvailableFilterValues = () => {
+    if (!selectedFilterColumn) return [];
+    return getOrderedValues(data, selectedFilterColumn, selectedFilterColumn);
+  };
 
   // Sankey visualization utilities
   const createSankeyData = useCallback((systems) => {
@@ -958,21 +994,16 @@ const BioDigitalSankeyApp = () => {
 
   useEffect(() => {
     const filtered = data.filter(d => {
-      const organismMatch = !filters.organism || 
-        (Array.isArray(d.organism) ? d.organism.includes(filters.organism) : false);
-      const scaleMatch = !filters.scale || 
-        (Array.isArray(d.scale) ? d.scale.includes(filters.scale) : false);
-      const temporalityMatch = !filters.temporality || 
-        (Array.isArray(d.temporality) ? d.temporality.includes(filters.temporality) : false);
-      const triggerMatch = !filters.trigger || 
-        (Array.isArray(d.trigger) ? d.trigger.includes(filters.trigger) : false);
-      const outputMatch = !filters.output || 
-        (Array.isArray(d.output) ? d.output.includes(filters.output) : false);
-      
-      return organismMatch && scaleMatch && temporalityMatch && triggerMatch && outputMatch;
+      return activeFilters.every(filter => {
+        const fieldValue = d[filter.column];
+        if (Array.isArray(fieldValue)) {
+          return fieldValue.includes(filter.value);
+        }
+        return fieldValue === filter.value;
+      });
     });
     setFilteredData(filtered);
-  }, [data, filters]);
+  }, [data, activeFilters]);
 
   useEffect(() => {
     drawSankey();
@@ -995,7 +1026,7 @@ const BioDigitalSankeyApp = () => {
 
   // Utility Functions
   const resetView = () => {
-    setFilters({ organism: '', scale: '', temporality: '', trigger: '', output: '' });
+    setActiveFilters([]);
     setVisibleColumns([...allColumns]);
   };
 
@@ -1082,10 +1113,7 @@ const BioDigitalSankeyApp = () => {
   };
 
   const uniqueOrganisms = getOrderedValues(data, 'organism', 'organism');
-  const uniqueScales = getOrderedValues(data, 'scale', 'scale');
-  const uniqueTriggers = getOrderedValues(data, 'trigger', 'trigger');
   const uniqueOutputs = getOrderedValues(data, 'output', 'output');
-  const uniqueTemporalities = getOrderedValues(data, 'temporality', 'temporality');
 
   // Component render
   return (
@@ -1117,67 +1145,69 @@ const BioDigitalSankeyApp = () => {
 
       {/* Filters */}
       <div className="filter-section">
-        <div className="filter-group">
-          <label>Filter by... Organism:</label>
-          <select 
-            className="filter-select"
-            value={filters.organism} 
-            onChange={(e) => setFilters(prev => ({ ...prev, organism: e.target.value }))}
-          >
-            <option value="">All Organisms</option>
-            {uniqueOrganisms.map(organism => (
-              <option key={organism} value={organism}>{organism}</option>
-            ))}
-          </select>
+        <div className="compact-filter-group" style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
+          <label style={{ fontWeight: 'bold' }}>Filter by:</label>
           
-          <label>Trigger:</label>
           <select 
-            className="filter-select"
-            value={filters.trigger} 
-            onChange={(e) => setFilters(prev => ({ ...prev, trigger: e.target.value }))}
+            value={selectedFilterColumn}
+            onChange={(e) => {
+              setSelectedFilterColumn(e.target.value);
+              setSelectedFilterValue('');
+            }}
+            style={{ minWidth: '120px' }}
           >
-            <option value="">All Triggers</option>
-            {uniqueTriggers.map(trigger => (
-              <option key={trigger} value={trigger}>{trigger}</option>
+            <option value="">Select Category...</option>
+            {visibleColumns.map((column, index) => (
+              <option key={column} value={column}>
+                {columnLabels[allColumns.indexOf(column)]}
+              </option>
             ))}
           </select>
 
-          <label>Organism Output:</label>
-          <select 
-            className="filter-select"
-            value={filters.output} 
-            onChange={(e) => setFilters(prev => ({ ...prev, output: e.target.value }))}
-          >
-            <option value="">All Outputs</option>
-            {uniqueOutputs.map(output => (
-              <option key={output} value={output}>{output}</option>
-            ))}
-          </select>
+          {selectedFilterColumn && (
+            <select 
+              value={selectedFilterValue}
+              onChange={(e) => setSelectedFilterValue(e.target.value)}
+              style={{ minWidth: '150px' }}
+            >
+              <option value="">Select Value...</option>
+              {getAvailableFilterValues().map(value => (
+                <option key={value} value={value}>{value}</option>
+              ))}
+            </select>
+          )}
 
-          <label>Scale:</label>
-          <select 
-            className="filter-select"
-            value={filters.scale} 
-            onChange={(e) => setFilters(prev => ({ ...prev, scale: e.target.value }))}
-          >
-            <option value="">All Scales</option>
-            {uniqueScales.map(scale => (
-              <option key={scale} value={scale}>{scale}</option>
-            ))}
-          </select>
-          
-          <label>Speed:</label>
-          <select 
-            className="filter-select"
-            value={filters.temporality} 
-            onChange={(e) => setFilters(prev => ({ ...prev, temporality: e.target.value }))}
-          >
-            <option value="">All Speeds</option>
-            {uniqueTemporalities.map(temporality => (
-              <option key={temporality} value={temporality}>{temporality}</option>
-            ))}
-          </select>
+          {selectedFilterColumn && selectedFilterValue && (
+            <button type="button" className="btn" onClick={addFilter}>
+              Add Filter
+            </button>
+          )}
+
+          {activeFilters.length > 0 && (
+            <button type="button" className="btn" onClick={clearAllFilters}>
+              Clear All
+            </button>
+          )}
         </div>
+
+        {activeFilters.length > 0 && (
+          <div className="active-filters">
+            <div className="chips-container">
+              {activeFilters.map(filter => (
+                <div key={filter.id} className="chip">
+                  <span>{filter.label}</span>
+                  <button
+                    type="button"
+                    className="chip-remove"
+                    onClick={() => removeFilter(filter.id)}
+                  >
+                    ×
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
         
         {/* Column Controls */}
         <div className="column-controls">
