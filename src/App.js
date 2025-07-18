@@ -32,10 +32,13 @@ const FIELD_MAPPING = {
 };
 
 const BioDigitalSankeyApp = () => {
-  // Constants
-  const allColumns = useMemo(() => [
-    'organism', 'trigger', 'output', 'scale', 'temporality', 'role-organism', 'role-digital'
-  ], []);
+  // Constants - derived from FIELD_MAPPING
+  const allColumns = useMemo(() => {
+    // Get internal field names that should be used in the visualization
+    // Exclude 'id' and non-visualization fields like 'name', 'author', etc.
+    const visualizationFields = ['organism', 'trigger', 'output', 'scale', 'temporality', 'role-organism', 'role-digital'];
+    return visualizationFields.filter(field => Object.values(FIELD_MAPPING).includes(field));
+  }, []);
   
   const columnLabels = useMemo(() => [
     'Organism', 'Trigger', 'Observable Output', 'Scale', 'Speed', 'Organism → Digital Role', 'Digital → Organism Role'
@@ -106,35 +109,35 @@ const BioDigitalSankeyApp = () => {
       const processedData = result.records.map(record => {
         const fields = record.fields;
         
-        // Process organism with GMO suffix
-        const organismValues = normalizeToArray(fields[Object.keys(FIELD_MAPPING).find(key => FIELD_MAPPING[key] === 'organism')]);
-        const isGMO = fields[Object.keys(FIELD_MAPPING).find(key => FIELD_MAPPING[key] === 'gmo')];
-        const processedOrganism = organismValues.map(org => `${org}${isGMO ? ' (gmo)' : ''}`);
-
+        // Start with required fields
         const system = {
-          id: record.id,
-          name: fields[Object.keys(FIELD_MAPPING).find(key => FIELD_MAPPING[key] === 'name')] || 'Unnamed System',
-          author: (fields[Object.keys(FIELD_MAPPING).find(key => FIELD_MAPPING[key] === 'author')] || '').toString().trim(),
-          year: fields[Object.keys(FIELD_MAPPING).find(key => FIELD_MAPPING[key] === 'year')] || '',
-          img_name: (fields[Object.keys(FIELD_MAPPING).find(key => FIELD_MAPPING[key] === 'img_name')] || '').toString().trim(),
-          url: (fields[Object.keys(FIELD_MAPPING).find(key => FIELD_MAPPING[key] === 'url')] || '').toString().trim(),
-          organism: processedOrganism,
-          gmo: fields[Object.keys(FIELD_MAPPING).find(key => FIELD_MAPPING[key] === 'gmo')],
-          trigger: normalizeToArray(fields[Object.keys(FIELD_MAPPING).find(key => FIELD_MAPPING[key] === 'trigger')]),
-          output: normalizeToArray(fields[Object.keys(FIELD_MAPPING).find(key => FIELD_MAPPING[key] === 'output')]),
-          scale: normalizeToArray(fields[Object.keys(FIELD_MAPPING).find(key => FIELD_MAPPING[key] === 'scale')]),
-          temporality: normalizeToArray(fields[Object.keys(FIELD_MAPPING).find(key => FIELD_MAPPING[key] === 'temporality')]),
-          'role-organism': normalizeToArray(fields[Object.keys(FIELD_MAPPING).find(key => FIELD_MAPPING[key] === 'role-organism')]),
-          'role-digital': normalizeToArray(fields[Object.keys(FIELD_MAPPING).find(key => FIELD_MAPPING[key] === 'role-digital')])
+          id: record.id
         };
         
-        // Debug log each processed system
-        //console.log('Processed system:', system);
+        // Dynamically add all mapped fields
+        Object.entries(FIELD_MAPPING).forEach(([airtableField, internalField]) => {
+          const value = fields[airtableField];
+          
+          if (internalField === 'organism') {
+            // Special handling for organism with GMO suffix
+            const organismValues = normalizeToArray(value);
+            const isGMO = fields[Object.keys(FIELD_MAPPING).find(key => FIELD_MAPPING[key] === 'gmo')];
+            system[internalField] = organismValues.map(org => `${org}${isGMO ? ' (gmo)' : ''}`);
+          } else if (['trigger', 'output', 'scale', 'temporality', 'role-organism', 'role-digital'].includes(internalField)) {
+            // Array fields
+            system[internalField] = normalizeToArray(value);
+          } else if (['author', 'img_name', 'url'].includes(internalField)) {
+            // String fields that need trimming
+            system[internalField] = (value || '').toString().trim();
+          } else {
+            // Default handling for other fields
+            system[internalField] = value || (internalField === 'name' ? 'Unnamed System' : '');
+          }
+        });
         
         return system;
       }).filter(item => item.organism && item.organism.length > 0);
 
-      //console.log('Final processed data:', processedData);
       setData(processedData);
       setLoading(false);
     } catch (error) {
@@ -171,18 +174,7 @@ const BioDigitalSankeyApp = () => {
     const nodeMap = new Map();
 
     console.log('=== DEBUG: Creating Sankey data ===');
-    //console.log('Systems:', systems);
     console.log('Visible columns:', visibleColumns);
-    
-    // Let's check what the first system looks like
-    /*
-    if (systems.length > 0) {
-      console.log('First system data:', systems[0]);
-      visibleColumns.forEach(col => {
-        console.log(`${col}:`, systems[0][col], 'Type:', typeof systems[0][col]);
-      });
-    }
-    */
 
     visibleColumns.forEach((column) => {
       let uniqueValues = [
@@ -236,7 +228,7 @@ const BioDigitalSankeyApp = () => {
         });
       } else if (column === 'scale') {
         // Define scale hierarchy from smallest to largest (lower index = comes first)
-        const scaleUnits = ['cell', 'organism', 'population', 'ecosystem'];
+        const scaleUnits = ['subcell', 'cell', 'organism', 'population', 'ecosystem'];
         
         uniqueValues.sort((a, b) => {
           const aLower = a.toLowerCase();
@@ -288,8 +280,6 @@ const BioDigitalSankeyApp = () => {
         uniqueValues.sort();
       }
 
-      //console.log(`Unique values for ${column}:`, uniqueValues);
-
       uniqueValues.forEach(value => {
         const nodeId = `${column}-${value}`;
         const relatedSystems = systems.filter(d => {
@@ -319,18 +309,12 @@ const BioDigitalSankeyApp = () => {
         const valuesA = normalizeToArray(system[colA]);
         const valuesB = normalizeToArray(system[colB]);
 
-        //console.log(`System ${system.name}: ${colA} -> ${colB}`);
-        //console.log(`  Values A (${colA}):`, valuesA);
-        //console.log(`  Values B (${colB}):`, valuesB);
-
         valuesA.forEach(sourceValue => {
           valuesB.forEach(targetValue => {
             if (!sourceValue || !targetValue) return;
             
             const sourceId = `${colA}-${sourceValue}`;
             const targetId = `${colB}-${targetValue}`;
-            
-            //console.log(`  Creating link: ${sourceId} -> ${targetId}`);
             
             const existingLink = links.find(l => l.source.id === sourceId && l.target.id === targetId);
 
@@ -341,8 +325,6 @@ const BioDigitalSankeyApp = () => {
               const sourceNode = nodeMap.get(sourceId);
               const targetNode = nodeMap.get(targetId);
               
-              //console.log(`  Source node found: ${!!sourceNode}, Target node found: ${!!targetNode}`);
-              
               if (sourceNode && targetNode) {
                 links.push({
                   source: sourceNode,
@@ -350,7 +332,6 @@ const BioDigitalSankeyApp = () => {
                   value: 1,
                   systems: [system]
                 });
-                //console.log(`  ✓ Link created successfully`);
               } else {
                 console.warn(`  ✗ Missing nodes for link: ${sourceId} -> ${targetId}`);
               }
@@ -360,8 +341,6 @@ const BioDigitalSankeyApp = () => {
       }
     });
 
-    //console.log('Generated nodes:', nodes);
-    //console.log('Generated links:', links);
     return { nodes, links };
   }, [visibleColumns, normalizeToArray]);
 
@@ -451,9 +430,12 @@ const BioDigitalSankeyApp = () => {
     `;
     
     systems.forEach(system => {
-      const imgTag = system.img_name
-        ? `<img src="${process.env.PUBLIC_URL}/images/${system.img_name}" alt="${system.name}" class="system-thumb" />`
-        : '';
+      let imgTag = '';
+      if (system.img_name) {
+        const isExternalUrl = system.img_name.startsWith('http://') || system.img_name.startsWith('https://') || system.img_name.startsWith('www.');
+        const imgSrc = isExternalUrl ? system.img_name : `${process.env.PUBLIC_URL}/images/${system.img_name}`;
+        imgTag = `<img src="${imgSrc}" alt="${system.name}" class="system-thumb" />`;
+      }
 
       content += `
         <div class="system-detail">
@@ -933,6 +915,37 @@ const BioDigitalSankeyApp = () => {
 
     zoomControls.append('text')
       .classed('zoom-button-text', true)
+      .attr('y', 17)
+      .text('+');
+
+    // Zoom out button
+    zoomControls.append('rect')
+      .classed('zoom-button', true)
+      .attr('y', 30)
+      .on('click', function() {
+        svg.transition().duration(200).call(
+          zoom.translateBy, 0, 0
+        ).transition().duration(200).call(
+          zoom.scaleBy, 0.8
+        );
+      });
+
+    zoomControls.append('text')
+      .classed('zoom-button-text', true)
+      .attr('y', 47)
+      .text('−');
+
+    // Reset zoom button
+    zoomControls.append('rect')
+      .classed('zoom-button', true)
+      .classed('zoom-button-reset', true)
+      .attr('y', 60)
+      .on('click', function() {
+        svg.transition().duration(200).call(zoom.transform, defaultTransform);
+      });
+
+    zoomControls.append('text')
+      .classed('zoom-button-text', true)
       .attr('y', 77)
       .text('⌂');
 
@@ -941,7 +954,7 @@ const BioDigitalSankeyApp = () => {
   // Effects - Only load data once on mount
   useEffect(() => {
     loadFromAirtable();
-  }, []); // Empty dependency array - only runs once on mount
+  }, []);
 
   useEffect(() => {
     const filtered = data.filter(d => {
@@ -972,7 +985,6 @@ const BioDigitalSankeyApp = () => {
     };
 
     window.addEventListener('resize', handleResize);
-    // Also listen for orientation changes on mobile
     window.addEventListener('orientationchange', handleResize);
     
     return () => {
@@ -1012,7 +1024,6 @@ const BioDigitalSankeyApp = () => {
   const getOrderedValues = (data, field, column) => {
     let uniqueValues = [...new Set(data.flatMap(d => d[field] || []))];
     
-    // Apply the same ordering logic as in createSankeyData
     if (column === 'temporality') {
       const timeUnits = ['second', 'minute', 'hour', 'day', 'week'];
       

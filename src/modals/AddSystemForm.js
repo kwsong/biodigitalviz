@@ -140,10 +140,15 @@ const AddSystemForm = ({ existingData, onSubmit, onClose }) => {
     const filteredOptions = getFilteredOptions(field);
     const showDropdown = activeDropdown === field.name && filteredOptions.length > 0;
     
+    // Check if this is a strict select field (predefined options only)
+    const isStrictSelect = (field.type === 'singleSelect' || field.type === 'multipleSelects') && 
+                          field.options && field.options.length > 0;
+    
     switch (field.type) {
       case 'singleLineText':
       case 'multilineText':
         if (field.options.length > 0) {
+          // Text field with suggestions (allows custom values)
           return (
             <div style={{ position: 'relative' }}>
               <input 
@@ -224,78 +229,153 @@ const AddSystemForm = ({ existingData, onSubmit, onClose }) => {
         );
 
       case 'singleSelect':
-        return (
-          <div style={{ position: 'relative' }}>
-            <input 
-              type="text"
-              className="form-input"
-              value={searchTerm}
-              onChange={(e) => handleSearchChange(field.name, e.target.value)}
-              onFocus={() => setActiveDropdown(field.name)}
-              onBlur={() => handleInputBlur(field.name)}
-              placeholder={`Select ${field.name}...`}
-            />
-            {showDropdown && (
-              <div className="dropdown-options">
-                {filteredOptions.map(option => (
-                  <div
-                    key={option}
-                    className="dropdown-option"
-                    onMouseDown={() => handleOptionSelect(field.name, option, field.type)}
-                  >
-                    {option}
-                  </div>
+        if (isStrictSelect) {
+          // Pure dropdown for strict select fields
+          return (
+            <div style={{ position: 'relative' }}>
+              <select 
+                className="form-input"
+                value={value}
+                onChange={(e) => handleFieldChange(field.name, e.target.value)}
+              >
+                <option value="">Select {field.name}...</option>
+                {field.options.map(option => (
+                  <option key={option} value={option}>{option}</option>
                 ))}
-              </div>
-            )}
-          </div>
-        );
+              </select>
+            </div>
+          );
+        } else {
+          // Searchable dropdown for flexible fields
+          return (
+            <div style={{ position: 'relative' }}>
+              <input 
+                type="text"
+                className="form-input"
+                value={searchTerm}
+                onChange={(e) => handleSearchChange(field.name, e.target.value)}
+                onFocus={() => setActiveDropdown(field.name)}
+                onBlur={() => handleInputBlur(field.name)}
+                placeholder={`Select ${field.name}...`}
+              />
+              {showDropdown && (
+                <div className="dropdown-options">
+                  {filteredOptions.map(option => (
+                    <div
+                      key={option}
+                      className="dropdown-option"
+                      onMouseDown={() => handleOptionSelect(field.name, option, field.type)}
+                    >
+                      {option}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          );
+        }
 
       case 'multipleSelects':
         const selectedChips = getSelectedChips(field.name);
-        return (
-          <div className="dropdown-container">
-            {/* Display selected chips */}
-            {selectedChips.length > 0 && (
-              <div className="chips-container">
-                {selectedChips.map(chip => (
-                  <div key={chip} className="chip">
-                    <span>{chip}</span>
-                    <button
-                      type="button"
-                      className="chip-remove"
-                      onClick={() => removeChip(field.name, chip)}
+        
+        if (isStrictSelect) {
+          // Pure chip selector for strict multiselect fields
+          const availableOptions = field.options.filter(option => !selectedChips.includes(option));
+          
+          return (
+            <div className="dropdown-container">
+              {/* Display selected chips */}
+              {selectedChips.length > 0 && (
+                <div className="chips-container">
+                  {selectedChips.map(chip => (
+                    <div key={chip} className="chip">
+                      <span>{chip}</span>
+                      <button
+                        type="button"
+                        className="chip-remove"
+                        onClick={() => removeChip(field.name, chip)}
+                      >
+                        ×
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+              
+              {availableOptions.length > 0 && (
+                <select 
+                  className="form-input"
+                  value=""
+                  onChange={(e) => {
+                    if (e.target.value) {
+                      const currentChips = getSelectedChips(field.name);
+                      const newChips = [...currentChips, e.target.value];
+                      handleFieldChange(field.name, newChips.join(', '));
+                      // Reset the select
+                      e.target.value = "";
+                    }
+                  }}
+                >
+                  <option value="">Add {field.name}...</option>
+                  {availableOptions.map(option => (
+                    <option key={option} value={option}>{option}</option>
+                  ))}
+                </select>
+              )}
+              
+              {availableOptions.length === 0 && selectedChips.length > 0 && (
+                <div style={{ color: '#666', fontSize: '0.9em', padding: '8px' }}>
+                  All options selected
+                </div>
+              )}
+            </div>
+          );
+        } else {
+          // Searchable multiselect for flexible fields
+          return (
+            <div className="dropdown-container">
+              {/* Display selected chips */}
+              {selectedChips.length > 0 && (
+                <div className="chips-container">
+                  {selectedChips.map(chip => (
+                    <div key={chip} className="chip">
+                      <span>{chip}</span>
+                      <button
+                        type="button"
+                        className="chip-remove"
+                        onClick={() => removeChip(field.name, chip)}
+                      >
+                        ×
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+              <input 
+                type="text"
+                className="form-input"
+                value={searchTerm}
+                onChange={(e) => handleSearchChange(field.name, e.target.value)}
+                onFocus={() => setActiveDropdown(field.name)}
+                onBlur={() => handleInputBlur(field.name)}
+                placeholder={selectedChips.length > 0 ? `Add another ${field.name}...` : `Type to search ${field.name}...`}
+              />
+              {showDropdown && (
+                <div className="dropdown-options">
+                  {filteredOptions.map(option => (
+                    <div
+                      key={option}
+                      className="dropdown-option"
+                      onMouseDown={() => handleOptionSelect(field.name, option, field.type)}
                     >
-                      ×
-                    </button>
-                  </div>
-                ))}
-              </div>
-            )}
-            <input 
-              type="text"
-              className="form-input"
-              value={searchTerm}
-              onChange={(e) => handleSearchChange(field.name, e.target.value)}
-              onFocus={() => setActiveDropdown(field.name)}
-              onBlur={() => handleInputBlur(field.name)}
-              placeholder={selectedChips.length > 0 ? `Add another ${field.name}...` : `Type to search ${field.name}...`}
-            />
-            {showDropdown && (
-              <div className="dropdown-options">
-                {filteredOptions.map(option => (
-                  <div
-                    key={option}
-                    className="dropdown-option"
-                    onMouseDown={() => handleOptionSelect(field.name, option, field.type)}
-                  >
-                    {option}
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        );
+                      {option}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          );
+        }
 
       case 'url':
         return (
