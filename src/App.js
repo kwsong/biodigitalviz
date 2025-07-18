@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import * as d3 from 'd3';
+import AddSystemForm from './modals/AddSystemForm';
+import { getAirtableFieldMetadata, generateOptionsFromData, addToAirtable } from './airtableMetadata';
 import './styles/App.css';
 import './styles/Modal.css';
 
@@ -10,21 +12,23 @@ const AIRTABLE_CONFIG = {
   tableId: 'tblYix3jMMM9MhIds'
 };
 
-// Field mapping - Airtable field names to internal field names
+// Single source of truth for field mapping - Airtable field names to internal field names
 const FIELD_MAPPING = {
-  name: 'Project Title',
-  author: 'Author(s)/Creator(s)',
-  img_name: 'Image Link',
-  year: 'Year',
-  gmo: 'Genetically Modified',
-  url: 'Website Link',
-  organism: 'Organism',
-  trigger: 'Trigger', 
-  output: 'Observable Output of organism',
-  scale: 'Scale',
-  temporality: 'Speed of reaction',
-  'role-organism': 'Role of organism for digital',
-  'role-digital': 'Role of digital for organism'
+  'Project Title': 'name',
+  'Author(s)/Creator(s)': 'author',
+  'Image Link': 'img_name',
+  'DOI': 'doi',
+  'Year': 'year',
+  'Genetically Modified': 'gmo',
+  'Website Link': 'url',
+  'Organism': 'organism',
+  'Trigger': 'trigger', 
+  'Observable Output of organism': 'output',
+  'Scale': 'scale',
+  'Speed of reaction': 'temporality',
+  'Role of organism for digital': 'role-organism',
+  'Role of digital for organism': 'role-digital',
+  'Evolution over time': 'evolution'
 };
 
 const BioDigitalSankeyApp = () => {
@@ -47,68 +51,6 @@ const BioDigitalSankeyApp = () => {
   const [detailContent, setDetailContent] = useState({ title: '', content: '' });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [dropdownValues, setDropdownValues] = useState({
-    organism: '',
-    trigger: '',
-    output: '',
-    scale: '',
-    temporality: '',
-    'role-organism': '',
-    'role-digital': ''
-  });
-  
-  // State variables for Add New System modal
-  const [showCustomFields, setShowCustomFields] = useState({
-    organism: false,
-    trigger: false,
-    output: false,
-    scale: false,
-    temporality: false,
-    'role-organism': false,
-    'role-digital': false
-  });
-
-  // Helper function to handle dropdown changes
-  const handleDropdownChange = (fieldName, value) => {
-  setDropdownValues(prev => ({
-    ...prev,
-    [fieldName]: value
-  }));
-  
-  setShowCustomFields(prev => ({
-    ...prev,
-    [fieldName]: value === 'other'
-  }));
-};
-
-  // Reusable form field component
-  const FormField = ({ label, name, options, showCustom, onDropdownChange, value, required = false }) => (
-    <div className="form-group">
-      <label className="form-label">{label}:</label>
-      <select 
-        name={name} 
-        className="form-select"
-        value={value || ''} // Controlled value
-        onChange={(e) => onDropdownChange(name, e.target.value)}
-      >
-        <option value="">Select {label.toLowerCase()}</option>
-        {options.map(option => (
-          <option key={option} value={option}>{option}</option>
-        ))}
-        <option value="other">Other (specify below)</option>
-      </select>
-      {showCustom && (
-        <input 
-          type="text" 
-          name={`${name}-custom`} 
-          placeholder="Enter custom - separate multiple with commas"
-          className="form-input"
-          style={{ marginTop: '5px' }}
-          required
-        />
-      )}
-    </div>
-  );
 
   // Refs
   const svgRef = useRef();
@@ -159,31 +101,31 @@ const BioDigitalSankeyApp = () => {
       const firstRecord = result.records[0];
       const availableFields = Object.keys(firstRecord.fields);
       console.log('Available fields in Airtable:', availableFields);
-      console.log('Expected fields:', Object.values(FIELD_MAPPING));
+      console.log('Expected fields:', Object.keys(FIELD_MAPPING));
       
       const processedData = result.records.map(record => {
         const fields = record.fields;
         
         // Process organism with GMO suffix
-        const organismValues = normalizeToArray(fields[FIELD_MAPPING.organism]);
-        const isGMO = fields[FIELD_MAPPING.gmo];
+        const organismValues = normalizeToArray(fields[Object.keys(FIELD_MAPPING).find(key => FIELD_MAPPING[key] === 'organism')]);
+        const isGMO = fields[Object.keys(FIELD_MAPPING).find(key => FIELD_MAPPING[key] === 'gmo')];
         const processedOrganism = organismValues.map(org => `${org}${isGMO ? ' (gmo)' : ''}`);
 
         const system = {
           id: record.id,
-          name: fields[FIELD_MAPPING.name] || 'Unnamed System',
-          author: (fields[FIELD_MAPPING.author] || '').toString().trim(),
-          year: fields[FIELD_MAPPING.year] || '',
-          img_name: (fields[FIELD_MAPPING.img_name] || '').toString().trim(),
-          url: (fields[FIELD_MAPPING.url] || '').toString().trim(),
+          name: fields[Object.keys(FIELD_MAPPING).find(key => FIELD_MAPPING[key] === 'name')] || 'Unnamed System',
+          author: (fields[Object.keys(FIELD_MAPPING).find(key => FIELD_MAPPING[key] === 'author')] || '').toString().trim(),
+          year: fields[Object.keys(FIELD_MAPPING).find(key => FIELD_MAPPING[key] === 'year')] || '',
+          img_name: (fields[Object.keys(FIELD_MAPPING).find(key => FIELD_MAPPING[key] === 'img_name')] || '').toString().trim(),
+          url: (fields[Object.keys(FIELD_MAPPING).find(key => FIELD_MAPPING[key] === 'url')] || '').toString().trim(),
           organism: processedOrganism,
-          gmo: fields[FIELD_MAPPING.gmo],
-          trigger: normalizeToArray(fields[FIELD_MAPPING.trigger]),
-          output: normalizeToArray(fields[FIELD_MAPPING.output]),
-          scale: normalizeToArray(fields[FIELD_MAPPING.scale]),
-          temporality: normalizeToArray(fields[FIELD_MAPPING.temporality]),
-          'role-organism': normalizeToArray(fields[FIELD_MAPPING['role-organism']]),
-          'role-digital': normalizeToArray(fields[FIELD_MAPPING['role-digital']])
+          gmo: fields[Object.keys(FIELD_MAPPING).find(key => FIELD_MAPPING[key] === 'gmo')],
+          trigger: normalizeToArray(fields[Object.keys(FIELD_MAPPING).find(key => FIELD_MAPPING[key] === 'trigger')]),
+          output: normalizeToArray(fields[Object.keys(FIELD_MAPPING).find(key => FIELD_MAPPING[key] === 'output')]),
+          scale: normalizeToArray(fields[Object.keys(FIELD_MAPPING).find(key => FIELD_MAPPING[key] === 'scale')]),
+          temporality: normalizeToArray(fields[Object.keys(FIELD_MAPPING).find(key => FIELD_MAPPING[key] === 'temporality')]),
+          'role-organism': normalizeToArray(fields[Object.keys(FIELD_MAPPING).find(key => FIELD_MAPPING[key] === 'role-organism')]),
+          'role-digital': normalizeToArray(fields[Object.keys(FIELD_MAPPING).find(key => FIELD_MAPPING[key] === 'role-digital')])
         };
         
         // Debug log each processed system
@@ -202,169 +144,25 @@ const BioDigitalSankeyApp = () => {
     }
   }, [normalizeToArray]); 
 
-  const addToAirtable = useCallback(async (systemData) => {
-    console.log('Starting addToAirtable function');
-    console.log('Input systemData:', systemData);
+  const handleAddSystem = useCallback(async (airtableFormData) => {
+    console.log('Handling add system with Airtable field names:', airtableFormData);
     
     try {
-      console.log('Building Airtable payload...');
-      
-      // Helper function to convert single values to arrays (properly handle comma-separated values)
-      const toArrayField = (value) => {
-        if (!value || value === '') return [];
-        if (Array.isArray(value)) return value.filter(v => v && v.trim());
-        // Split by comma, trim whitespace, filter out empty strings
-        return value.split(',')
-          .map(v => v.trim())
-          .filter(v => v.length > 0);
-      };
-      
-      // Helper function for fields that might be single select
-      const toSingleField = (value) => {
-        if (!value || value === '') return null;
-        if (Array.isArray(value)) return value[0]; // Take first value if array
-        // If comma-separated, take only the first one
-        return value.split(',')[0].trim();
-      };
-      
-      // Debug all input values
-      console.log('All input values:');
-      Object.keys(systemData).forEach(key => {
-        console.log(`  - ${key}:`, systemData[key], `(type: ${typeof systemData[key]})`);
-      });
-      
-      const airtableData = {
-        fields: {}
-      };
-
-      // Add all fields explicitly
-      if (systemData.name && systemData.name.trim()) {
-        airtableData.fields[FIELD_MAPPING.name] = systemData.name.trim();
-      }
-      
-      if (systemData.author && systemData.author.trim()) {
-        airtableData.fields[FIELD_MAPPING.author] = systemData.author.trim();
-      }
-      
-      if (systemData.img_name && systemData.img_name.trim()) {
-        airtableData.fields[FIELD_MAPPING.img_name] = systemData.img_name.trim();
-      }
-      
-      if (systemData.url && systemData.url.trim()) {
-        airtableData.fields[FIELD_MAPPING.url] = systemData.url.trim();
-      }
-      
-      if (systemData.year && systemData.year.toString().trim()) {
-        const yearValue = parseInt(systemData.year);
-        if (!isNaN(yearValue)) {
-          airtableData.fields[FIELD_MAPPING.year] = yearValue;
-        }
-      }
-      
-      if (systemData.organism) {
-        const organismArray = toArrayField(systemData.organism);
-        if (organismArray.length > 0) {
-          airtableData.fields[FIELD_MAPPING.organism] = organismArray;
-          console.log('Organism array:', organismArray);
-        }
-      }
-      
-      // include GMO field (boolean)
-      airtableData.fields[FIELD_MAPPING.gmo] = Boolean(systemData.gmo);
-      
-      if (systemData.trigger) {
-        const triggerArray = toArrayField(systemData.trigger);
-        if (triggerArray.length > 0) {
-          airtableData.fields[FIELD_MAPPING.trigger] = triggerArray;
-          console.log('Trigger array:', triggerArray);
-        }
-      }
-      
-      if (systemData.output) {
-        const outputArray = toArrayField(systemData.output);
-        if (outputArray.length > 0) {
-          airtableData.fields[FIELD_MAPPING.output] = outputArray;
-          console.log('Output array:', outputArray);
-        }
-      }
-      
-      if (systemData.scale) {
-        const scaleArray = toArrayField(systemData.scale);
-        if (scaleArray.length > 0) {
-          airtableData.fields[FIELD_MAPPING.scale] = scaleArray;
-          console.log('Scale array:', scaleArray);
-        }
-      }
-      
-      if (systemData.temporality) {
-        const temporalityArray = toArrayField(systemData.temporality);
-        if (temporalityArray) {
-          airtableData.fields[FIELD_MAPPING.temporality] = temporalityArray;
-          console.log('Temporality array:', temporalityArray);
-        }
-      }
-      
-      if (systemData['role-organism']) {
-        const roleOrganismArray = toArrayField(systemData['role-organism']);
-        if (roleOrganismArray.length > 0) {
-          airtableData.fields[FIELD_MAPPING['role-organism']] = roleOrganismArray;
-          console.log('Role-organism array:', roleOrganismArray);
-        }
-      }
-      
-      if (systemData['role-digital']) {
-        const roleDigitalArray = toArrayField(systemData['role-digital']);
-        if (roleDigitalArray.length > 0) {
-          airtableData.fields[FIELD_MAPPING['role-digital']] = roleDigitalArray;
-          console.log('Role-digital array:', roleDigitalArray);
-        }
-      }
-
-      console.log('Final Airtable payload:', JSON.stringify(airtableData, null, 2));
-
-      console.log('Making API request...');
-      const response = await fetch(`https://api.airtable.com/v0/${AIRTABLE_CONFIG.baseId}/${AIRTABLE_CONFIG.tableId}`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${AIRTABLE_CONFIG.token}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(airtableData)
-      });
-
-      console.log('Response received:');
-      console.log('  - Status:', response.status);
-      
-      if (!response.ok) {
-        console.error('Request failed!');
-        const errorText = await response.text();
-        console.error('  - Error response body:', errorText);
-        
-        try {
-          const errorJson = JSON.parse(errorText);
-          console.error('  - Parsed error:', errorJson);
-          
-        } catch (e) {
-          console.error('  - Could not parse error as JSON');
-        }
-        
+      const success = await addToAirtable(airtableFormData);
+      if (success) {
+        console.log('System added successfully!');
+        setShowModal(false);
+        await loadFromAirtable();
+        return true;
+      } else {
+        console.error('Failed to add system.');
         return false;
       }
-
-      const result = await response.json();
-      console.log('Successfully added record:', result);
-      await loadFromAirtable();
-
-      // Only refresh data once, and only on success
-      return true;
     } catch (error) {
-      console.error('Exception in addToAirtable:', error);
-      console.error('  - Error name:', error.name);
-      console.error('  - Error message:', error.message);
-      console.error('  - Error stack:', error.stack);
+      console.error('Error in handleAddSystem:', error);
       return false;
     }
-  }, []);
+  }, [loadFromAirtable]);
 
   // Sankey visualization utilities
   const createSankeyData = useCallback((systems) => {
@@ -1135,37 +933,6 @@ const BioDigitalSankeyApp = () => {
 
     zoomControls.append('text')
       .classed('zoom-button-text', true)
-      .attr('y', 17)
-      .text('+');
-
-    // Zoom out button
-    zoomControls.append('rect')
-      .classed('zoom-button', true)
-      .attr('y', 30)
-      .on('click', function() {
-        svg.transition().duration(200).call(
-          zoom.translateBy, 0, 0
-        ).transition().duration(200).call(
-          zoom.scaleBy, 0.8
-        );
-      });
-
-    zoomControls.append('text')
-      .classed('zoom-button-text', true)
-      .attr('y', 47)
-      .text('−');
-
-    // Reset zoom button
-    zoomControls.append('rect')
-      .classed('zoom-button', true)
-      .classed('zoom-button-reset', true)
-      .attr('y', 60)
-      .on('click', function() {
-        svg.transition().duration(200).call(zoom.transform, defaultTransform);
-      });
-
-    zoomControls.append('text')
-      .classed('zoom-button-text', true)
       .attr('y', 77)
       .text('⌂');
 
@@ -1175,30 +942,6 @@ const BioDigitalSankeyApp = () => {
   useEffect(() => {
     loadFromAirtable();
   }, []); // Empty dependency array - only runs once on mount
-
-  // Debugging -- check the detail modal content
-  /*
-  useEffect(() => {
-    if (showDetailModal) {
-      console.log('🎭 Detail modal should be visible');
-      console.log('📝 Detail content:', detailContent);
-      console.log('🔍 Modal title:', detailContent.title);
-      console.log('🔍 Modal content length:', detailContent.content?.length);
-      
-      // Check if modal is actually in DOM
-      setTimeout(() => {
-        const modalElement = document.querySelector('.modal-overlay');
-        if (modalElement) {
-          console.log('✅ Modal found in DOM');
-          console.log('📐 Modal computed styles:', window.getComputedStyle(modalElement));
-          console.log('📦 Modal innerHTML:', modalElement.innerHTML);
-        } else {
-          console.log('❌ Modal not found in DOM');
-        }
-      }, 100);
-    }
-  }, [showDetailModal, detailContent]);
-  */
 
   useEffect(() => {
     const filtered = data.filter(d => {
@@ -1237,83 +980,6 @@ const BioDigitalSankeyApp = () => {
       window.removeEventListener('orientationchange', handleResize);
     };
   }, [drawSankey]);
-
-  const handleFormSubmit = async (e) => {
-    e.preventDefault();
-    const formData = new FormData(e.target);
-    
-    // Debug all form data
-    console.log('🔍 All form data:');
-    for (let [key, value] of formData.entries()) {
-      console.log(`  ${key}: "${value}"`);
-    }
-    
-    // Helper function to get value from select or custom input
-    const getFieldValue = (selectName, customName) => {
-      const selectValue = formData.get(selectName);
-      const customValue = formData.get(customName);
-      
-      console.log(`Field ${selectName}:`, { selectValue, customValue });
-      
-      // If "other" was selected, use custom value; otherwise use select value
-      if (selectValue === 'other') {
-        return customValue?.trim() || '';
-      } else if (selectValue && selectValue !== '') {
-        return selectValue;
-      }
-      return '';
-    };
-    
-    // Get all field values
-    const organism = getFieldValue('organism', 'organism-custom');
-    const trigger = getFieldValue('trigger', 'trigger-custom');
-    const output = getFieldValue('output', 'output-custom');
-    const scale = getFieldValue('scale', 'scale-custom');
-    const temporality = getFieldValue('temporality', 'temporality-custom');
-    const roleOrganism = getFieldValue('role-organism', 'role-organism-custom');
-    const roleDigital = getFieldValue('role-digital', 'role-digital-custom');
-    
-    console.log('✅ Final field values:', {
-      organism, trigger, output, scale, temporality, roleOrganism, roleDigital
-    });
-    
-    const newEntry = {
-      name: formData.get('name')?.trim() || '',
-      author: formData.get('author')?.trim() || '',
-      url: formData.get('url')?.trim() || '',
-      img_name: formData.get('img_name')?.trim() || '',
-      year: formData.get('year') || '',
-      organism: organism,
-      gmo: formData.get('gmo') === 'on',
-      trigger: trigger,
-      output: output,
-      scale: scale,
-      temporality: temporality,
-      'role-organism': roleOrganism,
-      'role-digital': roleDigital
-    };
-    
-    // Disable the submit button to prevent double submission
-    const submitButton = e.target.querySelector('button[type="submit"]');
-    const originalText = submitButton.textContent;
-    submitButton.disabled = true;
-    submitButton.textContent = 'Adding...';
-    
-    try {
-      const success = await addToAirtable(newEntry);
-      if (success) {
-        alert('New bio-digital system added successfully!');
-        setShowModal(false);
-        e.target.reset();
-        await loadFromAirtable();
-      } else {
-        alert('Failed to add system. Check the console for details.');
-      }
-    } finally {
-      submitButton.disabled = false;
-      submitButton.textContent = originalText;
-    }
-  };
 
   // Utility Functions
   const resetView = () => {
@@ -1535,152 +1201,18 @@ const BioDigitalSankeyApp = () => {
 
       {/* Add New System Modal */}
       {showModal && (
-        <div className="modal-overlay">
-          <div className="modal-content">
-            <div className="modal-header">
-              <h2 className="modal-title">Add New Bio-Digital System</h2>
-              <button className="modal-close" onClick={() => setShowModal(false)}>
-                &times;
-              </button>
-            </div>
-            
-            <form onSubmit={handleFormSubmit}>
-              <div className="form-group">
-                <label className="form-label">Project Title:</label>
-                <input 
-                  type="text" 
-                  name="name" 
-                  required
-                  className="form-input"
-                />
-              </div>
-
-              <div className="form-group">
-                <label className="form-label">Author(s)/Creator(s):</label>
-                <input 
-                  type="text" 
-                  name="author" 
-                  className="form-input"
-                />
-              </div>
-
-              <div className="form-group">
-                <label className="form-label">Website Link:</label>
-                <input 
-                  type="text" 
-                  name="url" 
-                  className="form-input"
-                />
-              </div>
-
-              <div className="form-group">
-                <label className="form-label">Image Name:</label>
-                <input 
-                  type="text" 
-                  name="img_name" 
-                  className="form-input"
-                />
-              </div>
-
-              <div className="form-group">
-                <label className="form-label">Year:</label>
-                <input 
-                  type="number" 
-                  name="year" 
-                  min="1900"
-                  max="2030"
-                  className="form-input"
-                />
-              </div>
-
-              <FormField 
-                label="Organism"
-                name="organism"
-                options={uniqueOrganisms}
-                value={dropdownValues.organism}
-                showCustom={showCustomFields.organism}
-                onDropdownChange={handleDropdownChange}
-                required
-              />
-
-              <div className="form-group">
-                <label className="form-label">
-                  <input
-                    type="checkbox"
-                    name="gmo"
-                    className="form-checkbox"
-                  />
-                  Genetically Modified?
-                </label>
-              </div>
-
-              <FormField 
-                label="Trigger"
-                name="trigger"
-                options={uniqueTriggers}
-                value={dropdownValues.trigger}
-                showCustom={showCustomFields.trigger}
-                onDropdownChange={handleDropdownChange}
-                required
-              />
-
-              <FormField 
-                label="Observable Output"
-                name="output"
-                options={uniqueOutputs}
-                showCustom={showCustomFields.output}
-                onDropdownChange={handleDropdownChange}
-                required
-              />
-
-              <FormField 
-                label="Scale"
-                name="scale"
-                options={uniqueScales}
-                value={dropdownValues.scale}
-                showCustom={showCustomFields.scale}
-                onDropdownChange={handleDropdownChange}
-                required
-              />
-
-              <FormField 
-                label="Speed"
-                name="temporality"
-                options={uniqueTemporalities}
-                value={dropdownValues.temporality}
-                showCustom={showCustomFields.temporality}
-                onDropdownChange={handleDropdownChange}
-                required
-              />
-
-              <FormField 
-                label="Role of Organism for Digital Component"
-                name="role-organism"
-                options={getOrderedValues(data, 'role-organism', 'role-organism')}
-                value={dropdownValues['role-organism']}
-                showCustom={showCustomFields['role-organism']}
-                onDropdownChange={handleDropdownChange}
-                required
-              />
-
-              <FormField 
-                label="Role of Digital for Organism"
-                name="role-digital"
-                options={getOrderedValues(data, 'role-digital', 'role-digital')}
-                value={dropdownValues['role-digital']}
-                showCustom={showCustomFields['role-digital']}
-                onDropdownChange={handleDropdownChange}
-                required
-              />
-              
-              <div className="form-group">
-                <button type="submit" className="btn">
-                  Add System
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
+        <AddSystemForm
+          existingData={data}
+          onSubmit={async (formData) => {
+            const success = await handleAddSystem(formData);
+            if (success) {
+              alert('System added successfully!');
+            } else {
+              alert('Failed to add system.');
+            }
+          }}
+          onClose={() => setShowModal(false)}
+        />
       )}
 
       {showDetailModal && (
