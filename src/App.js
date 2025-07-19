@@ -484,12 +484,13 @@ const BioDigitalSankeyApp = () => {
               <p><strong>Organism:</strong> ${Array.isArray(system.organism) ? system.organism.join(', ') : system.organism}</p>
               <p><strong>Trigger:</strong> ${Array.isArray(system.trigger) ? system.trigger.join(', ') : system.trigger}</p>
               <p><strong>Output:</strong> ${Array.isArray(system.output) ? system.output.join(', ') : system.output}</p>
+              <p><strong>Scale:</strong> ${Array.isArray(system.scale) ? system.scale.join(', ') : system.scale}</p>
             </div>
             <div>
-              <p><strong>Scale:</strong> ${Array.isArray(system.scale) ? system.scale.join(', ') : system.scale}</p>
               <p><strong>Temporality:</strong> ${Array.isArray(system.temporality) ? system.temporality.join(', ') : system.temporality}</p>
-              <p><strong>Organism Role:</strong> ${Array.isArray(system['role-organism']) ? system['role-organism'].join(', ') : system['role-organism']}</p>
-              <p><strong>Digital Role:</strong> ${Array.isArray(system['role-digital']) ? system['role-digital'].join(', ') : system['role-digital']}</p>
+              <p><strong>Temporal Pattern:</strong> ${Array.isArray(system.temporality2) ? system.temporality2.join(', ') : system.temporality2}</p>
+              <p><strong>Organism Role (for Digital):</strong> ${Array.isArray(system['role-organism']) ? system['role-organism'].join(', ') : system['role-organism']}</p>
+              <p><strong>Digital Role (for Organism):</strong> ${Array.isArray(system['role-digital']) ? system['role-digital'].join(', ') : system['role-digital']}</p>
             </div>
           </div>
         </div>
