@@ -25,8 +25,8 @@ const FIELD_MAPPING = {
   'Trigger': 'trigger', 
   'Observable Output of organism': 'output',
   'Scale': 'scale',
-  'Speed of notable reaction': 'temporality',
-  'Temporal quality': 'temporality2',
+  'Response speed': 'temporality',
+  'Temporal pattern(s)': 'temporality2',
   'Role of organism for digital': 'role-organism',
   'Role of digital for organism': 'role-digital',
   'Evolution over time': 'evolution'
