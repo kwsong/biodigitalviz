@@ -212,4 +212,4 @@ const addToAirtable = async (airtableFormData) => {
 };
 
 // Export all functions
-export { getAirtableFieldMetadata, generateOptionsFromData, addToAirtable };
+export { getAirtableFieldMetadata, generateOptionsFromData, addToAirtable, AIRTABLE_CONFIG };

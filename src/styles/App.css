@@ -15,29 +15,26 @@
   --color-error-bg: #fee2e2;
   --color-error-border: #fca5a5;
   --color-error-text: #dc2626;
-  --color-highlight: #2563eb;
+  --color-highlight: #3b82f6;
   --color-dimmed: #cccccc;
+  --color-green: #10b981;
+  --color-green-dark: #059669;
   
   /* Spacing */
+  --spacing-xxs: 2px;
   --spacing-xs: 5px;
   --spacing-sm: 8px;
   --spacing-md: 10px;
   --spacing-lg: 15px;
   
-  /* Border radius */
+  /* Other */
   --border-radius-sm: 4px;
-  
-  /* Font sizes */
   --font-xs: 0.6rem;
   --font-sm: 0.75rem;
   --font-base: 0.8rem;
   --font-md: 0.9rem;
   --font-lg: 1.2rem;
-  
-  /* Shadows */
   --shadow-light: 0 1px 3px rgba(0,0,0,0.1);
-  
-  /* Transitions */
   --transition-fast: 0.2s;
 }
 
@@ -60,7 +57,6 @@ body, html {
   box-sizing: border-box;
 }
 
-/* Typography */
 .app-title {
   text-align: center;
   color: var(--color-text-primary);
@@ -77,7 +73,6 @@ body, html {
   cursor: pointer;
   transition: background-color var(--transition-fast);
   padding: var(--spacing-xs);
-  border-radius: 4px;
   font-size: var(--font-md);
 }
 
@@ -163,12 +158,6 @@ body, html {
   flex-wrap: wrap;
 }
 
-.column-label-text {
-  font-weight: 800;
-  font-size: var(--font-sm);
-  pointer-events: none;
-}
-
 .column-toggle {
   display: flex;
   align-items: center;
@@ -184,47 +173,6 @@ body, html {
   color: var(--color-text-secondary);
   cursor: move;
 }
-
-/* Visualization styles */
-.tooltip {
-  position: absolute;
-  background: rgba(0,0,0,0.8);
-  color: var(--color-white);
-  padding: var(--spacing-xs);
-  border-radius: var(--border-radius-xs);
-  font-size: var(--spacing-md);
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity var(--transition-fast);
-}
-
-/* Flow highlighting */
-.flow-highlighted {
-  stroke: var(--color-highlight) !important;
-  opacity: 0.8 !important;
-}
-
-.flow-dimmed {
-  stroke: var(--color-dimmed) !important;
-  opacity: 0.2 !important;
-}
-
-.node-highlighted {
-  fill: var(--color-highlight) !important;
-  opacity: 1 !important;
-}
-
-.node-dimmed {
-  fill: var(--color-dimmed) !important;
-  opacity: 0.3 !important;
-}
-
-/* Links */
-.link-unstyled {
-  color: inherit;
-  text-decoration: underline;
-}
-
 
 /* System display */
 .system-header {
@@ -247,7 +195,12 @@ body, html {
   margin-left: 12px;
 }
 
-/* Diagram container - responsive height */
+.link-unstyled {
+  color: inherit;
+  text-decoration: underline;
+}
+
+/* Diagram container */
 .diagram-container {
   overflow: hidden;
   margin-bottom: var(--spacing-sm);
@@ -262,7 +215,78 @@ body, html {
   display: block;
 }
 
-/* Zoom Buttons */
+/* Visualization styles */
+.tooltip {
+  position: absolute;
+  background: rgba(0,0,0,0.8);
+  color: var(--color-white);
+  padding: var(--spacing-xs);
+  border-radius: var(--border-radius-sm);
+  font-size: var(--font-sm);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity var(--transition-fast);
+}
+
+/* Links */
+.link {
+  transition: opacity var(--transition-fast), stroke-width var(--transition-fast), stroke var(--transition-fast);
+}
+
+.link.flow-highlighted {
+  stroke: var(--color-highlight) !important;
+  opacity: 1 !important;
+}
+
+.link.flow-dimmed {
+  stroke: var(--color-dimmed) !important;
+  opacity: 0.3 !important;
+}
+
+/* Link overlays */
+.link-overlay {
+  pointer-events: none;
+}
+
+.link-overlay-blue {
+  stroke: var(--color-highlight) !important;
+  opacity: 0.8;
+}
+
+.link-overlay-green {
+  stroke: var(--color-green) !important;
+  opacity: 0.8;
+}
+
+.link-overlay-blue-dimmed {
+  opacity: 0.3 !important;
+}
+
+/* Nodes */
+.node rect {
+  transition: opacity var(--transition-fast), fill var(--transition-fast);
+}
+
+.node rect.node-highlighted {
+  fill: var(--color-highlight) !important;
+  opacity: 1 !important;
+}
+
+.node rect.node-dimmed {
+  fill: var(--color-dimmed) !important;
+  opacity: 0.3 !important;
+}
+
+.node rect.node-dimmed ~ text {
+  opacity: 0.3 !important;
+}
+
+.node rect.node-additional {
+  fill: var(--color-green) !important;
+  opacity: 1 !important;
+}
+
+/* Zoom controls */
 .zoom-button {
   fill: var(--color-primary);
   cursor: pointer;
@@ -282,83 +306,66 @@ body, html {
   transform: translateX(12px);
 }
 
-/* Enhanced highlighting with consistent stroke widths */
-.link {
-  transition: opacity 0.2s ease, stroke-width 0.2s ease, stroke 0.2s ease;
+/* Filter chips */
+.active-filters {
+  margin-top: var(--spacing-sm);
 }
 
-.link.flow-highlighted {
-  stroke: var(--color-highlight) !important;
-  opacity: 0.9 !important;
-  /* stroke-width will be set dynamically via JavaScript based on system count */
+.chips-container {
+  display: flex;
+  gap: var(--spacing-xs);
+  flex-wrap: wrap;
 }
 
-.link.flow-dimmed {
-  stroke: var(--color-dimmed) !important;
-  opacity: 0.2 !important;
+.chip {
+  display: inline-flex;
+  align-items: center;
+  background: var(--color-primary);
+  color: var(--color-white);
+  padding: var(--spacing-xxs) var(--spacing-xs);
+  border-radius: var(--border-radius-sm);
+  font-size: var(--font-sm);
+  gap: var(--spacing-xs);
 }
 
-.node rect {
-  transition: opacity 0.2s ease, fill 0.2s ease;
-}
-
-.node rect.node-highlighted {
-  fill: var(--color-highlight) !important;
-  opacity: 1 !important;
-  /* No stroke/outline changes */
-}
-
-.node rect.node-dimmed {
-  fill: var(--color-dimmed) !important;
-  opacity: 0.3 !important;
-}
-
-/* Enhanced node text for highlighted elements */
-.node-highlighted ~ text {
+.chip-remove {
+  background: none;
+  border: none;
+  color: var(--color-white);
+  cursor: pointer;
+  font-size: var(--font-md);
   font-weight: bold;
-  fill: #1d4ed8;
+  padding: 0;
+  margin-left: var(--spacing-xxs);
 }
 
-/* Frozen and additional highlighting */
-.link.flow-additional {
-  stroke: #10b981 !important; /* Green for additional highlights */
-  opacity: 0.8 !important;
+.chip-remove:hover {
+  opacity: 0.7;
 }
 
-.node rect.node-additional {
-  fill: #10b981 !important; /* Green for additional highlights */
-  opacity: 0.9 !important;
+.clicked-element {
+  stroke: var(--color-text-primary) !important;
+  stroke-width: 1px !important;
+  stroke-dasharray: 2,2 !important;
 }
 
-/* Additional node highlighting (green) - higher specificity to override blue */
-.node rect.node-highlighted.node-additional {
-  fill: #10b981 !important; /* Green overrides blue */
-  stroke: #059669 !important;
-  opacity: 1 !important;
+/* Clicked element indicator */
+.node rect.clicked-element {
+  stroke: var(--color-text-primary) !important;
+  stroke-width: 2px !important;
+  stroke-dasharray: 3,3 !important;
+  stroke-opacity: 1 !important;
 }
 
-/* Make frozen highlights slightly more prominent */
-.link.flow-highlighted {
-  stroke: var(--color-highlight) !important;
-  opacity: 1 !important;
+.clicked-link-outline {
+  fill: none !important;
+  stroke: var(--color-text-primary) !important;
+  stroke-width: 8px !important; /* Thicker than the blue overlay to show around it */
+  stroke-dasharray: 6,6 !important;
+  stroke-opacity: 0.8 !important;
+  pointer-events: none !important;
 }
 
-/* Additional highlighting (green) - higher specificity to override blue */
-.link.flow-highlighted.flow-additional {
-  stroke: #10b981 !important; /* Green overrides blue */
-  opacity: 1 !important;
-}
-
-.node rect.node-highlighted {
-  fill: var(--color-highlight) !important;
-  opacity: 1 !important;
-}
-
-/* Special styling for unfreeze button */
-.btn-unfreeze {
-  background: #ef4444 !important;
-}
-
-.btn-unfreeze:hover {
-  background: #dc2626 !important;
+.no-flash * {
+  transition: none !important;
 }
