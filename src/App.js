@@ -32,6 +32,7 @@ const FIELD_MAPPING = {
   'Evolution over time': 'evolution'
 };
 
+
 const BioDigitalSankeyApp = () => {
   // Constants - derived from FIELD_MAPPING
   const allColumns = useMemo(() => {
@@ -57,12 +58,16 @@ const BioDigitalSankeyApp = () => {
   const [detailContent, setDetailContent] = useState({ title: '', content: '' });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [frozenHighlight, setFrozenHighlight] = useState(null);
+  const [isFrozen, setIsFrozen] = useState(false);
+
 
   // Refs
   const svgRef = useRef();
   const currentGraph = useRef(null);
   const draggedElement = useRef(null);
   const containerRef = useRef();
+  const clickTimeout = useRef(null);
 
   // Helper function to normalize field to array
   const normalizeToArray = useCallback((fieldValue) => {
@@ -170,6 +175,61 @@ const BioDigitalSankeyApp = () => {
     }
   }, [loadFromAirtable]);
 
+  // restore highlighting upon modal close
+  const handleModalClose = () => {
+    setShowDetailModal(false);
+    
+    // Restore frozen highlighting if it exists
+    if (isFrozen && frozenHighlight) {
+      setTimeout(() => {
+        const allLinks = d3.selectAll('.link');
+        const allNodes = d3.selectAll('.node rect');
+        
+        // Reset everything first
+        allLinks
+          .classed('flow-dimmed', true)
+          .classed('flow-highlighted', false)
+          .classed('flow-additional', false);
+        
+        allNodes
+          .classed('node-dimmed', true)
+          .classed('node-highlighted', false)
+          .classed('node-additional', false);
+        
+        const targetSystemIds = frozenHighlight.map(s => s.name || JSON.stringify(s));
+        
+        // Restore blue highlighting
+        currentGraph.current.nodes.forEach((n, nIndex) => {
+          const matchingSystemsCount = n.systems.filter(nodeSystem => 
+            targetSystemIds.includes(nodeSystem.name || JSON.stringify(nodeSystem))
+          ).length;
+          
+          if (matchingSystemsCount > 0) {
+            const nodeElement = d3.select(`[data-node-id="${nIndex}"]`);
+            nodeElement
+              .classed('node-dimmed', false)
+              .classed('node-highlighted', true);
+          }
+        });
+        
+        currentGraph.current.links.forEach((link, linkIndex) => {
+          const matchingSystemsCount = link.systems.filter(linkSystem => 
+            targetSystemIds.includes(linkSystem.name || JSON.stringify(linkSystem))
+          ).length;
+          
+          if (matchingSystemsCount > 0) {
+            const strokeWidth = Math.max(2, matchingSystemsCount * 2);
+            const linkElement = d3.select(`[data-link-id="${linkIndex}"]`);
+            linkElement
+              .classed('flow-dimmed', false)
+              .classed('flow-highlighted', true)
+              .style('stroke-width', `${strokeWidth}px`);
+          }
+        });
+      }, 100);
+    }
+  };
+
   // Add filters
   const addFilter = () => {
     if (selectedFilterColumn && selectedFilterValue) {
@@ -201,6 +261,174 @@ const BioDigitalSankeyApp = () => {
   const getAvailableFilterValues = () => {
     if (!selectedFilterColumn) return [];
     return getOrderedValues(data, selectedFilterColumn, selectedFilterColumn);
+  };
+
+  // Enhanced highlighting with proper frozen state persistence
+  const highlightCompleteFlows = useCallback((targetSystems, isFrozenHighlight = false, isAdditionalHighlight = false) => {
+    if (!currentGraph.current) return;
+    
+    const allLinks = d3.selectAll('.link');
+    const allNodes = d3.selectAll('.node rect');
+    
+    const targetSystemIds = targetSystems.map(s => s.name || JSON.stringify(s));
+    
+    if (isFrozenHighlight) {
+      // This is setting a new frozen highlight - reset everything first
+      allLinks
+        .classed('flow-dimmed', true)
+        .classed('flow-highlighted', false)
+        .classed('flow-additional', false);
+      
+      allNodes
+        .classed('node-dimmed', true)
+        .classed('node-highlighted', false)
+        .classed('node-additional', false);
+      
+      // Apply frozen highlighting (blue)
+      currentGraph.current.links.forEach((link, linkIndex) => {
+        const matchingSystemsCount = link.systems.filter(linkSystem => 
+          targetSystemIds.includes(linkSystem.name || JSON.stringify(linkSystem))
+        ).length;
+        
+        if (matchingSystemsCount > 0) {
+          const strokeWidth = Math.max(2, matchingSystemsCount * 2);
+          const linkElement = d3.select(`[data-link-id="${linkIndex}"]`);
+          linkElement
+            .classed('flow-dimmed', false)
+            .classed('flow-highlighted', true)
+            .style('stroke-width', `${strokeWidth}px`);
+        }
+      });
+      
+      currentGraph.current.nodes.forEach((node, nodeIndex) => {
+        const matchingSystemsCount = node.systems.filter(nodeSystem => 
+          targetSystemIds.includes(nodeSystem.name || JSON.stringify(nodeSystem))
+        ).length;
+        
+        if (matchingSystemsCount > 0) {
+          const nodeElement = d3.select(`[data-node-id="${nodeIndex}"]`);
+          nodeElement
+            .classed('node-dimmed', false)
+            .classed('node-highlighted', true);
+        }
+      });
+    } else if (isAdditionalHighlight && isFrozen) {
+      // This is additional highlighting on top of frozen - only affect frozen elements
+      allLinks.classed('flow-additional', false); // Reset previous additional
+      allNodes.classed('node-additional', false);
+      
+      // Only apply additional highlighting to elements that are already frozen
+      currentGraph.current.links.forEach((link, linkIndex) => {
+        const linkElement = d3.select(`[data-link-id="${linkIndex}"]`);
+        const isCurrentlyHighlighted = linkElement.classed('flow-highlighted');
+        
+        if (isCurrentlyHighlighted) {
+          const matchingSystemsCount = link.systems.filter(linkSystem => 
+            targetSystemIds.includes(linkSystem.name || JSON.stringify(linkSystem))
+          ).length;
+          
+          if (matchingSystemsCount > 0) {
+            linkElement.classed('flow-additional', true);
+          }
+        }
+      });
+      
+      currentGraph.current.nodes.forEach((node, nodeIndex) => {
+        const nodeElement = d3.select(`[data-node-id="${nodeIndex}"]`);
+        const isCurrentlyHighlighted = nodeElement.classed('node-highlighted');
+        
+        if (isCurrentlyHighlighted) {
+          const matchingSystemsCount = node.systems.filter(nodeSystem => 
+            targetSystemIds.includes(nodeSystem.name || JSON.stringify(nodeSystem))
+          ).length;
+          
+          if (matchingSystemsCount > 0) {
+            nodeElement.classed('node-additional', true);
+          }
+        }
+      });
+    } else if (!isFrozen) {
+      // Regular temporary highlighting when nothing is frozen
+      allLinks
+        .classed('flow-dimmed', true)
+        .classed('flow-highlighted', false);
+      
+      allNodes
+        .classed('node-dimmed', true)
+        .classed('node-highlighted', false);
+      
+      currentGraph.current.links.forEach((link, linkIndex) => {
+        const matchingSystemsCount = link.systems.filter(linkSystem => 
+          targetSystemIds.includes(linkSystem.name || JSON.stringify(linkSystem))
+        ).length;
+        
+        if (matchingSystemsCount > 0) {
+          const strokeWidth = Math.max(2, matchingSystemsCount * 2);
+          const linkElement = d3.select(`[data-link-id="${linkIndex}"]`);
+          linkElement
+            .classed('flow-dimmed', false)
+            .classed('flow-highlighted', true)
+            .style('stroke-width', `${strokeWidth}px`);
+        }
+      });
+      
+      currentGraph.current.nodes.forEach((node, nodeIndex) => {
+        const matchingSystemsCount = node.systems.filter(nodeSystem => 
+          targetSystemIds.includes(nodeSystem.name || JSON.stringify(nodeSystem))
+        ).length;
+        
+        if (matchingSystemsCount > 0) {
+          const nodeElement = d3.select(`[data-node-id="${nodeIndex}"]`);
+          nodeElement
+            .classed('node-dimmed', false)
+            .classed('node-highlighted', true);
+        }
+      });
+    }
+  }, [isFrozen]);
+
+  const resetHighlighting = useCallback((keepFrozen = false) => {
+    if (!currentGraph.current) return;
+    
+    const allLinks = d3.selectAll('.link');
+    const allNodes = d3.selectAll('.node rect');
+    
+    if (keepFrozen && isFrozen) {
+      // Only reset additional highlights, keep frozen blue highlights
+      allLinks.classed('flow-additional', false);
+      allNodes.classed('node-additional', false);
+    } else {
+      // Reset everything including frozen
+      currentGraph.current.links.forEach((link, linkIndex) => {
+        const linkElement = d3.select(`[data-link-id="${linkIndex}"]`);
+        const originalStrokeWidth = Math.max(2, link.value * 2);
+        
+        linkElement
+          .classed('flow-dimmed', false)
+          .classed('flow-highlighted', false)
+          .classed('flow-additional', false)
+          .style('stroke-width', `${originalStrokeWidth}px`);
+      });
+      
+      allNodes
+        .classed('node-dimmed', false)
+        .classed('node-highlighted', false)
+        .classed('node-additional', false);
+      
+      // Clear frozen state
+      setIsFrozen(false);
+      setFrozenHighlight(null);
+    }
+  }, [isFrozen]);
+
+  const freezeHighlight = (systems) => {
+    setFrozenHighlight(systems);
+    setIsFrozen(true);
+    highlightCompleteFlows(systems, true, false);
+  };
+
+  const unfreezeHighlight = () => {
+    resetHighlighting(false);
   };
 
   // Sankey visualization utilities
@@ -393,72 +621,6 @@ const BioDigitalSankeyApp = () => {
     return `M${x0},${y0}C${x2},${y0} ${x3},${y1} ${x1},${y1}`;
   };
 
-  // Improved highlighting utilities with blue color
-  const highlightCompleteFlows = (targetSystems) => {
-    if (!currentGraph.current) return;
-    
-    const allLinks = d3.selectAll('.link');
-    const allNodes = d3.selectAll('.node rect');
-    
-    // Reset all highlighting
-    allLinks
-      .classed('flow-dimmed', true)
-      .classed('flow-highlighted', false)
-    
-    allNodes
-      .classed('node-dimmed', true)
-      .classed('node-highlighted', false)
-    
-    const targetSystemIds = targetSystems.map(s => s.name || JSON.stringify(s));
-    
-    // Highlight links with proper stroke-width highlighting
-    currentGraph.current.links.forEach((link, linkIndex) => {
-      const hasTargetSystem = link.systems.some(linkSystem => 
-        targetSystemIds.includes(linkSystem.name || JSON.stringify(linkSystem))
-      );
-      
-      if (hasTargetSystem) {
-        const linkElement = d3.select(`[data-link-id="${linkIndex}"]`);
-        linkElement
-          .classed('flow-dimmed', false)
-          .classed('flow-highlighted', true)
-      }
-    });
-    
-    // Highlight nodes
-    currentGraph.current.nodes.forEach((node, nodeIndex) => {
-      const hasTargetSystem = node.systems.some(nodeSystem => 
-        targetSystemIds.includes(nodeSystem.name || JSON.stringify(nodeSystem))
-      );
-      
-      if (hasTargetSystem) {
-        const nodeElement = d3.select(`[data-node-id="${nodeIndex}"]`);
-        nodeElement
-          .classed('node-dimmed', false)
-          .classed('node-highlighted', true)
-      }
-    });
-  };
-
-  const resetHighlighting = () => {
-    if (!currentGraph.current) return;
-    
-    const allLinks = d3.selectAll('.link');
-    const allNodes = d3.selectAll('.node rect');
-    
-    // Reset links to original stroke-width
-    currentGraph.current.links.forEach((link, linkIndex) => {
-      const linkElement = d3.select(`[data-link-id="${linkIndex}"]`);
-      linkElement
-        .classed('flow-dimmed', false)
-        .classed('flow-highlighted', false)
-    });
-    
-    allNodes
-      .classed('node-dimmed', false)
-      .classed('node-highlighted', false)
-  };
-
   // Consolidated function for showing system details (reduces redundancy)
   const generateSystemDetailsHTML = useCallback((systems) => {
     let content = `
@@ -580,6 +742,17 @@ const BioDigitalSankeyApp = () => {
 
     // Update SVG dimensions
     svg.attr('width', width).attr('height', height);
+
+    // Add background click handler to unfreeze when clicking outside
+    svg.on('click', function(event) {
+      // Check if the click was directly on the SVG background (not on any child elements)
+      if (event.target === svg.node()) {
+        if (isFrozen) {
+          console.log('Clicked outside - unfreezing');
+          unfreezeHighlight();
+        }
+      }
+    });
 
     // Create zoom behavior
     const zoom = d3.zoom()
@@ -870,25 +1043,228 @@ const BioDigitalSankeyApp = () => {
         .attr('data-link-id', linkIndex)
         .attr('d', createLinkPath(link.source, link.target))
         .attr('stroke', colorScale(link.source.category))
-        .attr('stroke-width', Math.max(2, link.value * 2))
+        .style('stroke-width', Math.max(2, link.value * 2) + 'px')
+        .attr('data-original-stroke', Math.max(2, link.value * 2)) // Store original for reset
         .attr('fill', 'none')
         .style('opacity', 0.5)
         .style('cursor', 'pointer')
         .on('mouseover', function(event) {
-          highlightCompleteFlows(link.systems);
-          tooltip
-            .style('opacity', 1)
-            .html(`<strong>(${link.source.category}:${link.source.name}) + (${link.target.category}:${link.target.name})</strong><br/>Systems: ${link.value}<br/>Click to explore connections`)
-            .style('left', (event.pageX + 10) + 'px')
-            .style('top', (event.pageY - 28) + 'px');
+          if (!isFrozen) {
+            highlightCompleteFlows(link.systems);
+          } else {
+            // Check if this link is already highlighted (blue)
+            const linkElement = d3.select(`[data-link-id="${linkIndex}"]`);
+            const isHighlighted = linkElement.classed('flow-highlighted');
+            
+            if (isHighlighted && frozenHighlight) {
+              // Only consider the intersection of hovered systems with frozen systems
+              const frozenSystemIds = frozenHighlight.map(s => s.name || JSON.stringify(s));
+              const hoveredSystemIds = link.systems.map(s => s.name || JSON.stringify(s));
+              const intersectionSystemIds = hoveredSystemIds.filter(id => frozenSystemIds.includes(id));
+              
+              console.log('Link hover - frozen systems:', frozenSystemIds.length, 'hovered systems:', hoveredSystemIds.length, 'intersection:', intersectionSystemIds.length);
+              
+              if (intersectionSystemIds.length > 0) {
+                // Reset previous additional highlighting and restore blue widths
+                d3.selectAll('.link').each(function() {
+                  const linkEl = d3.select(this);
+                  if (linkEl.classed('flow-additional')) {
+                    const originalWidth = linkEl.attr('data-blue-width');
+                    if (originalWidth) {
+                      linkEl.style('stroke-width', originalWidth + 'px');
+                    }
+                  }
+                  linkEl.classed('flow-additional', false);
+                });
+                d3.selectAll('.node rect').classed('node-additional', false);
+                
+                let greenNodesCount = 0;
+                let greenLinksCount = 0;
+                
+                // Apply green highlighting
+                currentGraph.current.nodes.forEach((n, nIndex) => {
+                  const nodeEl = d3.select(`[data-node-id="${nIndex}"]`);
+                  const isBlueHighlighted = nodeEl.classed('node-highlighted');
+                  
+                  if (isBlueHighlighted) {
+                    const nodeSystemIds = n.systems.map(s => s.name || JSON.stringify(s));
+                    const nodeIntersectionCount = nodeSystemIds.filter(id => intersectionSystemIds.includes(id)).length;
+                    
+                    if (nodeIntersectionCount > 0) {
+                      nodeEl.classed('node-additional', true);
+                      greenNodesCount++;
+                    }
+                  }
+                });
+                
+                currentGraph.current.links.forEach((link, linkIndex) => {
+                  const linkEl = d3.select(`[data-link-id="${linkIndex}"]`);
+                  const isBlueHighlighted = linkEl.classed('flow-highlighted');
+                  
+                  if (isBlueHighlighted) {
+                    const linkSystemIds = link.systems.map(s => s.name || JSON.stringify(s));
+                    const linkIntersectionCount = linkSystemIds.filter(id => intersectionSystemIds.includes(id)).length;
+                    
+                    if (linkIntersectionCount > 0) {
+                      // Store the current blue width before changing
+                      const currentWidth = linkEl.style('stroke-width').replace('px', '');
+                      linkEl.attr('data-blue-width', currentWidth);
+                      
+                      // Each link gets width based on how many intersection systems flow through IT
+                      const greenStrokeWidth = Math.max(2, linkIntersectionCount * 2);
+                      
+                      linkEl
+                        .classed('flow-additional', true)
+                        .style('stroke-width', `${greenStrokeWidth}px`);
+                      greenLinksCount++;
+                    }
+                  }
+                });
+                
+                console.log(`Applied green to ${greenNodesCount} nodes and ${greenLinksCount} links with individual widths`);
+              }
+            }
+          }
+          
+          // Show tooltip with intersection count when frozen
+          const linkElement = d3.select(`[data-link-id="${linkIndex}"]`);
+          const shouldShowTooltip = !isFrozen || linkElement.classed('flow-highlighted');
+          
+          if (shouldShowTooltip) {
+            let tooltipContent;
+            if (isFrozen && frozenHighlight) {
+              // Show only intersection systems count
+              const frozenSystemIds = frozenHighlight.map(s => s.name || JSON.stringify(s));
+              const linkSystemIds = link.systems.map(s => s.name || JSON.stringify(s));
+              const intersectionCount = linkSystemIds.filter(id => frozenSystemIds.includes(id)).length;
+              
+              tooltipContent = `<strong>(${link.source.category}:${link.source.name}) + (${link.target.category}:${link.target.name})</strong><br/>Frozen subset: ${intersectionCount} systems<br/>Click to unfreeze, double-click to explore subset`;
+            } else {
+              tooltipContent = `<strong>(${link.source.category}:${link.source.name}) + (${link.target.category}:${link.target.name})</strong><br/>Systems: ${link.value}<br/>Click to freeze/unfreeze, double-click to explore connections`;
+            }
+            
+            tooltip
+              .style('opacity', 1)
+              .html(tooltipContent)
+              .style('left', (event.pageX + 10) + 'px')
+              .style('top', (event.pageY - 28) + 'px');
+          }
         })
         .on('mouseout', function() {
-          resetHighlighting();
+          if (!isFrozen) {
+            resetHighlighting();
+          } else {
+            // Restore blue widths and remove green
+            d3.selectAll('.link').each(function() {
+              const linkEl = d3.select(this);
+              if (linkEl.classed('flow-additional')) {
+                const originalWidth = linkEl.attr('data-blue-width');
+                if (originalWidth) {
+                  linkEl.style('stroke-width', originalWidth + 'px');
+                }
+                linkEl.classed('flow-additional', false);
+              }
+            });
+            d3.selectAll('.node rect').classed('node-additional', false);
+          }
           tooltip.style('opacity', 0);
         })
         .on('click', function() {
-          showLinkDetails(link);
-        });
+          // Clear any existing timeout
+          if (clickTimeout.current) {
+            clearTimeout(clickTimeout.current);
+            clickTimeout.current = null;
+            return; // This was a double-click, don't process as single click
+          }
+          
+          // Set a timeout for single click
+          clickTimeout.current = setTimeout(() => {
+            console.log('Link clicked, current isFrozen:', isFrozen);
+            if (isFrozen) {
+              console.log('Unfreezing...');
+              unfreezeHighlight();
+            } else {
+              console.log('Freezing link with systems:', link.systems.length);
+              setFrozenHighlight(link.systems);
+              setIsFrozen(true);
+              
+              // Apply highlighting directly here
+              setTimeout(() => {
+                const allLinks = d3.selectAll('.link');
+                const allNodes = d3.selectAll('.node rect');
+                
+                allLinks
+                  .classed('flow-dimmed', true)
+                  .classed('flow-highlighted', false)
+                  .classed('flow-additional', false);
+                
+                allNodes
+                  .classed('node-dimmed', true)
+                  .classed('node-highlighted', false)
+                  .classed('node-additional', false);
+                
+                const targetSystemIds = link.systems.map(s => s.name || JSON.stringify(s));
+                
+                // Highlight ALL nodes that contain the target systems
+                currentGraph.current.nodes.forEach((n, nIndex) => {
+                  const matchingSystemsCount = n.systems.filter(nodeSystem => 
+                    targetSystemIds.includes(nodeSystem.name || JSON.stringify(nodeSystem))
+                  ).length;
+                  
+                  if (matchingSystemsCount > 0) {
+                    const nodeElement = d3.select(`[data-node-id="${nIndex}"]`);
+                    nodeElement
+                      .classed('node-dimmed', false)
+                      .classed('node-highlighted', true);
+                  }
+                });
+                
+                // Highlight ALL links that contain the target systems
+                currentGraph.current.links.forEach((l, lIndex) => {
+                  const matchingSystemsCount = l.systems.filter(linkSystem => 
+                    targetSystemIds.includes(linkSystem.name || JSON.stringify(linkSystem))
+                  ).length;
+                  
+                  if (matchingSystemsCount > 0) {
+                    const strokeWidth = Math.max(2, matchingSystemsCount * 2);
+                    const linkElement = d3.select(`[data-link-id="${lIndex}"]`);
+                    linkElement
+                      .classed('flow-dimmed', false)
+                      .classed('flow-highlighted', true)
+                      .style('stroke-width', `${strokeWidth}px`);
+                  }
+                });
+                
+                console.log('Applied link highlighting directly');
+              }, 100);
+            }
+            clickTimeout.current = null;
+          }, 200); // 200ms delay to distinguish from double-click
+        })
+        .on('dblclick', function(event) {
+          event.stopPropagation();
+          
+          if (clickTimeout.current) {
+            clearTimeout(clickTimeout.current);
+            clickTimeout.current = null;
+          }
+          
+          const linkElement = d3.select(`[data-link-id="${linkIndex}"]`);
+          const shouldShowDetails = !isFrozen || linkElement.classed('flow-highlighted');
+          
+          if (shouldShowDetails) {
+            if (isFrozen && frozenHighlight) {
+              // Show only the intersection of link systems with frozen systems
+              const frozenSystemIds = frozenHighlight.map(s => s.name || JSON.stringify(s));
+              const intersectionSystems = link.systems.filter(linkSystem => 
+                frozenSystemIds.includes(linkSystem.name || JSON.stringify(linkSystem))
+              );
+              showLinkDetails({ ...link, systems: intersectionSystems });
+            } else {
+              showLinkDetails(link);
+            }
+          }
+        })
     });
 
     // Draw nodes
@@ -908,20 +1284,222 @@ const BioDigitalSankeyApp = () => {
         .attr('fill', colorScale(node.category))
         .style('cursor', 'pointer')
         .on('mouseover', function(event) {
-          highlightCompleteFlows(node.systems);
-          tooltip
-            .style('opacity', 1)
-            .html(`<strong>${node.name}</strong><br/>Category: ${node.category}<br/>Connected systems: ${node.value}<br/>Click to explore`)
-            .style('left', (event.pageX + 10) + 'px')
-            .style('top', (event.pageY - 28) + 'px');
+          if (!isFrozen) {
+            highlightCompleteFlows(node.systems);
+          } else {
+            // Check if this node is already highlighted (blue)
+            const nodeElement = d3.select(`[data-node-id="${nodeIndex}"]`);
+            const isHighlighted = nodeElement.classed('node-highlighted');
+            
+            if (isHighlighted && frozenHighlight) {
+              // Only consider the intersection of hovered systems with frozen systems
+              const frozenSystemIds = frozenHighlight.map(s => s.name || JSON.stringify(s));
+              const hoveredSystemIds = node.systems.map(s => s.name || JSON.stringify(s));
+              const intersectionSystemIds = hoveredSystemIds.filter(id => frozenSystemIds.includes(id));
+              
+              console.log('Node hover - frozen systems:', frozenSystemIds.length, 'hovered systems:', hoveredSystemIds.length, 'intersection:', intersectionSystemIds.length);
+              
+              if (intersectionSystemIds.length > 0) {
+                // Reset previous additional highlighting and restore blue widths
+                d3.selectAll('.link').each(function() {
+                  const linkEl = d3.select(this);
+                  if (linkEl.classed('flow-additional')) {
+                    const originalWidth = linkEl.attr('data-blue-width');
+                    if (originalWidth) {
+                      linkEl.style('stroke-width', originalWidth + 'px');
+                    }
+                  }
+                  linkEl.classed('flow-additional', false);
+                });
+                d3.selectAll('.node rect').classed('node-additional', false);
+                
+                let greenNodesCount = 0;
+                let greenLinksCount = 0;
+                
+                // Apply green highlighting
+                currentGraph.current.nodes.forEach((n, nIndex) => {
+                  const nodeEl = d3.select(`[data-node-id="${nIndex}"]`);
+                  const isBlueHighlighted = nodeEl.classed('node-highlighted');
+                  
+                  if (isBlueHighlighted) {
+                    const nodeSystemIds = n.systems.map(s => s.name || JSON.stringify(s));
+                    const nodeIntersectionCount = nodeSystemIds.filter(id => intersectionSystemIds.includes(id)).length;
+                    
+                    if (nodeIntersectionCount > 0) {
+                      nodeEl.classed('node-additional', true);
+                      greenNodesCount++;
+                    }
+                  }
+                });
+                
+                currentGraph.current.links.forEach((link, linkIndex) => {
+                  const linkEl = d3.select(`[data-link-id="${linkIndex}"]`);
+                  const isBlueHighlighted = linkEl.classed('flow-highlighted');
+                  
+                  if (isBlueHighlighted) {
+                    const linkSystemIds = link.systems.map(s => s.name || JSON.stringify(s));
+                    const linkIntersectionCount = linkSystemIds.filter(id => intersectionSystemIds.includes(id)).length;
+                    
+                    if (linkIntersectionCount > 0) {
+                      // Store the current blue width before changing
+                      const currentWidth = linkEl.style('stroke-width').replace('px', '');
+                      linkEl.attr('data-blue-width', currentWidth);
+                      
+                      // Each link gets width based on how many intersection systems flow through IT
+                      const greenStrokeWidth = Math.max(2, linkIntersectionCount * 2);
+                      
+                      linkEl
+                        .classed('flow-additional', true)
+                        .style('stroke-width', `${greenStrokeWidth}px`);
+                      greenLinksCount++;
+                    }
+                  }
+                });
+                
+                console.log(`Applied green to ${greenNodesCount} nodes and ${greenLinksCount} links with individual widths`);
+              }
+            }
+          }
+          
+          // Show tooltip with intersection count when frozen
+          const nodeElement = d3.select(`[data-node-id="${nodeIndex}"]`);
+          const shouldShowTooltip = !isFrozen || nodeElement.classed('node-highlighted');
+          
+          if (shouldShowTooltip) {
+            let tooltipContent;
+            if (isFrozen && frozenHighlight) {
+              // Show only intersection systems count
+              const frozenSystemIds = frozenHighlight.map(s => s.name || JSON.stringify(s));
+              const nodeSystemIds = node.systems.map(s => s.name || JSON.stringify(s));
+              const intersectionCount = nodeSystemIds.filter(id => frozenSystemIds.includes(id)).length;
+              
+              tooltipContent = `<strong>${node.name}</strong><br/>Category: ${node.category}<br/>Frozen subset: ${intersectionCount} systems<br/>Click to unfreeze, double-click to explore subset`;
+            } else {
+              tooltipContent = `<strong>${node.name}</strong><br/>Category: ${node.category}<br/>Connected systems: ${node.value}<br/>Click to freeze/unfreeze, double-click to explore`;
+            }
+            
+            tooltip
+              .style('opacity', 1)
+              .html(tooltipContent)
+              .style('left', (event.pageX + 10) + 'px')
+              .style('top', (event.pageY - 28) + 'px');
+          }
         })
         .on('mouseout', function() {
-          resetHighlighting();
+          if (!isFrozen) {
+            resetHighlighting();
+          } else {
+            // Restore blue widths and remove green
+            d3.selectAll('.link').each(function() {
+              const linkEl = d3.select(this);
+              if (linkEl.classed('flow-additional')) {
+                const originalWidth = linkEl.attr('data-blue-width');
+                if (originalWidth) {
+                  linkEl.style('stroke-width', originalWidth + 'px');
+                }
+                linkEl.classed('flow-additional', false);
+              }
+            });
+            d3.selectAll('.node rect').classed('node-additional', false);
+          }
           tooltip.style('opacity', 0);
         })
         .on('click', function() {
-          showNodeDetails(node);
-        });
+          // Clear any existing timeout
+          if (clickTimeout.current) {
+            clearTimeout(clickTimeout.current);
+            clickTimeout.current = null;
+            return; // This was a double-click, don't process as single click
+          }
+          
+          // Set a timeout for single click
+          clickTimeout.current = setTimeout(() => {
+            console.log('Node clicked, current isFrozen:', isFrozen);
+            if (isFrozen) {
+              console.log('Unfreezing...');
+              unfreezeHighlight();
+            } else {
+              console.log('Freezing node with systems:', node.systems.length);
+              setFrozenHighlight(node.systems);
+              setIsFrozen(true);
+              
+              // Apply highlighting directly here
+              setTimeout(() => {
+                const allLinks = d3.selectAll('.link');
+                const allNodes = d3.selectAll('.node rect');
+                
+                allLinks
+                  .classed('flow-dimmed', true)
+                  .classed('flow-highlighted', false)
+                  .classed('flow-additional', false);
+                
+                allNodes
+                  .classed('node-dimmed', true)
+                  .classed('node-highlighted', false)
+                  .classed('node-additional', false);
+                
+                const targetSystemIds = node.systems.map(s => s.name || JSON.stringify(s));
+                
+                // Highlight ALL nodes that contain the target systems
+                currentGraph.current.nodes.forEach((n, nIndex) => {
+                  const matchingSystemsCount = n.systems.filter(nodeSystem => 
+                    targetSystemIds.includes(nodeSystem.name || JSON.stringify(nodeSystem))
+                  ).length;
+                  
+                  if (matchingSystemsCount > 0) {
+                    const nodeElement = d3.select(`[data-node-id="${nIndex}"]`);
+                    nodeElement
+                      .classed('node-dimmed', false)
+                      .classed('node-highlighted', true);
+                  }
+                });
+                
+                // Highlight related links
+                currentGraph.current.links.forEach((link, linkIndex) => {
+                  const matchingSystemsCount = link.systems.filter(linkSystem => 
+                    targetSystemIds.includes(linkSystem.name || JSON.stringify(linkSystem))
+                  ).length;
+                  
+                  if (matchingSystemsCount > 0) {
+                    const strokeWidth = Math.max(2, matchingSystemsCount * 2);
+                    const linkElement = d3.select(`[data-link-id="${linkIndex}"]`);
+                    linkElement
+                      .classed('flow-dimmed', false)
+                      .classed('flow-highlighted', true)
+                      .style('stroke-width', `${strokeWidth}px`);
+                  }
+                });
+                
+                console.log('Applied highlighting directly');
+              }, 100);
+            }
+            clickTimeout.current = null;
+          }, 200); // 200ms delay to distinguish from double-click
+        })
+        .on('dblclick', function(event) {
+          event.stopPropagation();
+          
+          if (clickTimeout.current) {
+            clearTimeout(clickTimeout.current);
+            clickTimeout.current = null;
+          }
+          
+          const nodeElement = d3.select(`[data-node-id="${nodeIndex}"]`);
+          const shouldShowDetails = !isFrozen || nodeElement.classed('node-highlighted');
+          
+          if (shouldShowDetails) {
+            if (isFrozen && frozenHighlight) {
+              // Show only the intersection of node systems with frozen systems
+              const frozenSystemIds = frozenHighlight.map(s => s.name || JSON.stringify(s));
+              const intersectionSystems = node.systems.filter(nodeSystem => 
+                frozenSystemIds.includes(nodeSystem.name || JSON.stringify(nodeSystem))
+              );
+              showNodeDetails({ ...node, systems: intersectionSystems });
+            } else {
+              showNodeDetails(node);
+            }
+          }
+        })
 
       // Add node labels with proper positioning
       nodeElement.append('text')
@@ -986,7 +1564,7 @@ const BioDigitalSankeyApp = () => {
       .attr('y', 77)
       .text('⌂');
 
-  }, [filteredData, visibleColumns, createSankeyData, showLinkDetails, showNodeDetails, loading, error, allColumns, columnLabels, handleColumnReorder]);
+  }, [filteredData, visibleColumns, createSankeyData, showLinkDetails, showNodeDetails, loading, error, allColumns, columnLabels, handleColumnReorder, highlightCompleteFlows, resetHighlighting, freezeHighlight, isFrozen, frozenHighlight]);
 
   // Effects - Only load data once on mount
   useEffect(() => {
@@ -1005,6 +1583,26 @@ const BioDigitalSankeyApp = () => {
     });
     setFilteredData(filtered);
   }, [data, activeFilters]);
+
+  useEffect(() => {
+    if (activeFilters.length > 0 && currentGraph.current) {
+      const matchingSystemIds = filteredData.map(s => s.name || JSON.stringify(s));
+      
+      if (matchingSystemIds.length > 0) {
+        if (isFrozen) {
+          // Apply as additional highlight on top of frozen
+          highlightCompleteFlows(filteredData, false, true);
+        } else {
+          // Apply as main highlight
+          highlightCompleteFlows(filteredData, false, false);
+        }
+      } else {
+        resetHighlighting(true); // Keep frozen if exists
+      }
+    } else {
+      resetHighlighting(true); // Keep frozen if exists
+    }
+  }, [filteredData, activeFilters, isFrozen]);
 
   useEffect(() => {
     drawSankey();
@@ -1142,6 +1740,11 @@ const BioDigitalSankeyApp = () => {
         <button className="btn" onClick={refreshData}>
           Refresh Data
         </button>
+        {isFrozen && (
+          <button className="btn btn-unfreeze" onClick={unfreezeHighlight}>
+            Unfreeze Highlight
+          </button>
+        )}
       </div>
 
       {/* Filters */}
@@ -1262,7 +1865,7 @@ const BioDigitalSankeyApp = () => {
           <div className="modal-content">
             <div className="modal-header">
               <h2 className="modal-title">{detailContent.title}</h2>
-              <button className="modal-close" onClick={() => setShowDetailModal(false)}>
+              <button className="modal-close" onClick={handleModalClose}>
                 &times;
               </button>
             </div>

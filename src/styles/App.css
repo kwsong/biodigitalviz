@@ -225,6 +225,7 @@ body, html {
   text-decoration: underline;
 }
 
+
 /* System display */
 .system-header {
   display: flex;
@@ -279,4 +280,85 @@ body, html {
   pointer-events: none;
   text-anchor: middle;
   transform: translateX(12px);
+}
+
+/* Enhanced highlighting with consistent stroke widths */
+.link {
+  transition: opacity 0.2s ease, stroke-width 0.2s ease, stroke 0.2s ease;
+}
+
+.link.flow-highlighted {
+  stroke: var(--color-highlight) !important;
+  opacity: 0.9 !important;
+  /* stroke-width will be set dynamically via JavaScript based on system count */
+}
+
+.link.flow-dimmed {
+  stroke: var(--color-dimmed) !important;
+  opacity: 0.2 !important;
+}
+
+.node rect {
+  transition: opacity 0.2s ease, fill 0.2s ease;
+}
+
+.node rect.node-highlighted {
+  fill: var(--color-highlight) !important;
+  opacity: 1 !important;
+  /* No stroke/outline changes */
+}
+
+.node rect.node-dimmed {
+  fill: var(--color-dimmed) !important;
+  opacity: 0.3 !important;
+}
+
+/* Enhanced node text for highlighted elements */
+.node-highlighted ~ text {
+  font-weight: bold;
+  fill: #1d4ed8;
+}
+
+/* Frozen and additional highlighting */
+.link.flow-additional {
+  stroke: #10b981 !important; /* Green for additional highlights */
+  opacity: 0.8 !important;
+}
+
+.node rect.node-additional {
+  fill: #10b981 !important; /* Green for additional highlights */
+  opacity: 0.9 !important;
+}
+
+/* Additional node highlighting (green) - higher specificity to override blue */
+.node rect.node-highlighted.node-additional {
+  fill: #10b981 !important; /* Green overrides blue */
+  stroke: #059669 !important;
+  opacity: 1 !important;
+}
+
+/* Make frozen highlights slightly more prominent */
+.link.flow-highlighted {
+  stroke: var(--color-highlight) !important;
+  opacity: 1 !important;
+}
+
+/* Additional highlighting (green) - higher specificity to override blue */
+.link.flow-highlighted.flow-additional {
+  stroke: #10b981 !important; /* Green overrides blue */
+  opacity: 1 !important;
+}
+
+.node rect.node-highlighted {
+  fill: var(--color-highlight) !important;
+  opacity: 1 !important;
+}
+
+/* Special styling for unfreeze button */
+.btn-unfreeze {
+  background: #ef4444 !important;
+}
+
+.btn-unfreeze:hover {
+  background: #dc2626 !important;
 }
