@@ -315,6 +315,17 @@ body, html {
   transform: translateX(12px);
 }
 
+.zoom-button-disabled {
+  fill: var(--color-primary-disabled) !important;
+  cursor: not-allowed !important;
+  pointer-events: none !important;
+}
+
+.zoom-button-text-disabled {
+  cursor: not-allowed !important;
+  pointer-events: none !important;
+}
+
 /* Filter chips */
 .active-filters {
   margin-top: var(--spacing-sm);

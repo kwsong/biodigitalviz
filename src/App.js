@@ -59,6 +59,8 @@ const BioDigitalSankeyApp = () => {
   const draggedElement = useRef(null);
   const containerRef = useRef();
   const clickTimeout = useRef(null);
+  const zoomTransformRef = useRef(d3.zoomIdentity);
+  const buttonsDisabledRef = useRef(false);
 
   // Helper Functions
   const normalizeToArray = useCallback((fieldValue) => {
@@ -823,23 +825,35 @@ const BioDigitalSankeyApp = () => {
       }
     });
 
+    const mainGroup = svg.append('g').attr('class', 'main-group');
+
+    // Simple debounce for zoom buttons
+    let lastZoomTime = 0;
+    const ZOOM_DEBOUNCE_MS = 400; // Prevent fast zoom clicks
+
     // Zoom behavior
     const zoom = d3.zoom()
       .scaleExtent([0.5, 3])
       .on('zoom', function(event) {
+        zoomTransformRef.current = event.transform;
         mainGroup.attr('transform', event.transform);
       });
 
     svg.call(zoom);
 
-    const mainGroup = svg.append('g').attr('class', 'main-group');
+    // Apply the current transform (or default if it's the first time)
+    const currentTransform = zoomTransformRef.current;
+    if (currentTransform.k === 1 && currentTransform.x === 0 && currentTransform.y === 0) {
+      // First time - set default position
+      const defaultTransform = d3.zoomIdentity.translate(-75, -25).scale(1);
+      zoomTransformRef.current = defaultTransform;
+      svg.call(zoom.transform, defaultTransform);
+    } else {
+      // Use saved transform
+      svg.call(zoom.transform, currentTransform);
+    }
 
-    const defaultScale = 1;
-    const panX = -75;
-    const panY = -25;
-    const defaultTransform = d3.zoomIdentity.translate(panX, panY).scale(defaultScale);
-    svg.call(zoom.transform, defaultTransform);
-
+    // create graph
     const graph = createSankeyData(filteredData);
     currentGraph.current = graph;
     
@@ -976,11 +990,77 @@ const BioDigitalSankeyApp = () => {
       .attr('class', 'zoom-controls')
       .attr('transform', `translate(${width}, 0)`);
 
-    // Zoom buttons
+    // Add disabled state tracking
+    let buttonsDisabled = false;
+
+    // Zoom buttons with debounce and visual feedback
     [
-      { y: 0, text: '+', action: () => svg.transition().duration(200).call(zoom.scaleBy, 1.2) },
-      { y: 30, text: '−', action: () => svg.transition().duration(200).call(zoom.scaleBy, 0.8) },
-      { y: 60, text: '⌂', action: () => svg.transition().duration(200).call(zoom.transform, defaultTransform), class: 'zoom-button-reset' }
+      { 
+        y: 0, 
+        text: '+', 
+        action: () => {
+          if (buttonsDisabledRef.current) return;
+          
+          // Disable all buttons functionally and visually FIRST
+          buttonsDisabledRef.current = true;
+          zoomControls.selectAll('.zoom-button').classed('zoom-button-disabled', true);
+          zoomControls.selectAll('.zoom-button-text').classed('zoom-button-text-disabled', true);
+          
+          svg.transition().duration(400).call(zoom.scaleBy, 1.2);
+          
+          // Re-enable buttons after debounce time
+          setTimeout(() => {
+            buttonsDisabledRef.current = false;
+            zoomControls.selectAll('.zoom-button').classed('zoom-button-disabled', false);
+            zoomControls.selectAll('.zoom-button-text').classed('zoom-button-text-disabled', false);
+          }, ZOOM_DEBOUNCE_MS);
+        }
+      },
+      { 
+        y: 30, 
+        text: '−', 
+        action: () => {
+          if (buttonsDisabledRef.current) return;
+          
+          // Disable all buttons functionally and visually FIRST
+          buttonsDisabledRef.current = true;
+          zoomControls.selectAll('.zoom-button').classed('zoom-button-disabled', true);
+          zoomControls.selectAll('.zoom-button-text').classed('zoom-button-text-disabled', true);
+          
+          svg.transition().duration(400).call(zoom.scaleBy, 0.8);
+          
+          // Re-enable buttons after debounce time
+          setTimeout(() => {
+            buttonsDisabledRef.current = false;
+            zoomControls.selectAll('.zoom-button').classed('zoom-button-disabled', false);
+            zoomControls.selectAll('.zoom-button-text').classed('zoom-button-text-disabled', false);
+          }, ZOOM_DEBOUNCE_MS);
+        }
+      },
+      {
+        y: 60, 
+        text: '⌂', 
+        action: () => {
+          if (buttonsDisabledRef.current) return;
+          
+          // Disable all buttons functionally and visually FIRST
+          buttonsDisabledRef.current = true;
+          zoomControls.selectAll('.zoom-button').classed('zoom-button-disabled', true);
+          zoomControls.selectAll('.zoom-button-text').classed('zoom-button-text-disabled', true);
+          
+          const defaultTransform = d3.zoomIdentity.translate(-75, -25).scale(1);
+          zoomTransformRef.current = defaultTransform;
+          svg.transition().duration(400).call(zoom.transform, defaultTransform);
+          
+          // Re-enable buttons after debounce time
+          setTimeout(() => {
+            buttonsDisabledRef.current = false;
+            zoomControls.selectAll('.zoom-button').classed('zoom-button-disabled', false);
+            zoomControls.selectAll('.zoom-button-text').classed('zoom-button-text-disabled', false);
+          }, ZOOM_DEBOUNCE_MS);
+        },
+        class: 'zoom-button-reset'
+      }
     ].forEach(({ y, text, action, class: btnClass }) => {
       zoomControls.append('rect')
         .classed('zoom-button', true)
@@ -1048,6 +1128,17 @@ const BioDigitalSankeyApp = () => {
   const resetView = () => {
     setActiveFilters([]);
     setVisibleColumns([...allColumns]);
+    
+    // Reset zoom
+    const defaultTransform = d3.zoomIdentity.translate(-75, -25).scale(1);
+    zoomTransformRef.current = defaultTransform;
+    
+    // Apply to current SVG if it exists
+    const svg = d3.select(svgRef.current);
+    if (svg.node()) {
+      const zoom = d3.zoom().scaleExtent([0.5, 3]);
+      svg.call(zoom.transform, defaultTransform);
+    }
   };
 
   const exportData = () => {
