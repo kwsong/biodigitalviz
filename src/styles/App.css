@@ -35,6 +35,7 @@
   --font-md: 0.9rem;
   --font-lg: 1.2rem;
   --shadow-light: 0 1px 3px rgba(0,0,0,0.1);
+  --transition-xfast: 0.1s;
   --transition-fast: 0.2s;
 }
 
@@ -230,7 +231,10 @@ body, html {
 
 /* Links */
 .link {
-  transition: opacity var(--transition-fast), stroke-width var(--transition-fast), stroke var(--transition-fast);
+  transition: opacity var(--transition-xfast), stroke-width var(--transition-xfast), stroke var(--transition-xfast);
+  fill: none;
+  opacity: 0.5;
+  cursor: pointer;
 }
 
 .link.flow-highlighted {
@@ -246,11 +250,12 @@ body, html {
 /* Link overlays */
 .link-overlay {
   pointer-events: none;
+  fill: none;
 }
 
 .link-overlay-blue {
   stroke: var(--color-highlight) !important;
-  opacity: 0.8;
+  opacity: 1;
 }
 
 .link-overlay-green {
@@ -264,7 +269,7 @@ body, html {
 
 /* Nodes */
 .node rect {
-  transition: opacity var(--transition-fast), fill var(--transition-fast);
+  transition: opacity var(--transition-xfast), fill var(--transition-xfast);
 }
 
 .node rect.node-highlighted {
@@ -284,6 +289,10 @@ body, html {
 .node rect.node-additional {
   fill: var(--color-green) !important;
   opacity: 1 !important;
+}
+
+.green-highlighting-active .node rect.node-highlighted:not(.node-additional) {
+  opacity: 0.3 !important;
 }
 
 /* Zoom controls */
@@ -360,8 +369,7 @@ body, html {
 .clicked-link-outline {
   fill: none !important;
   stroke: var(--color-text-primary) !important;
-  stroke-width: 8px !important; /* Thicker than the blue overlay to show around it */
-  stroke-dasharray: 6,6 !important;
+  stroke-dasharray: 2,2 !important; /* Very dense dotted pattern */
   stroke-opacity: 0.8 !important;
   pointer-events: none !important;
 }

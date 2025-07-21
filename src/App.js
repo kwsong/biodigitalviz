@@ -110,11 +110,7 @@ const BioDigitalSankeyApp = () => {
           .attr('class', 'link-overlay link-overlay-blue')
           .attr('data-original-link', linkIndex)
           .attr('d', createLinkPath(link.source, link.target))
-          .style('stroke', '#2563eb')
           .style('stroke-width', `${strokeWidth}px`)
-          .style('fill', 'none')
-          .style('opacity', 0.8)
-          .style('pointer-events', 'none');
       }
     });
     
@@ -151,7 +147,10 @@ const BioDigitalSankeyApp = () => {
     d3.selectAll('.link-overlay-green').remove();
     d3.selectAll('.node rect').classed('node-additional', false);
     
-    // Dim blue overlay links that aren't part of the green subset
+    // Add class to indicate green highlighting is active
+    d3.select('body').classed('green-highlighting-active', true);
+    
+    // Dim ALL blue overlay links
     d3.selectAll('.link-overlay-blue').classed('link-overlay-blue-dimmed', true);
     
     const linkGroup = d3.select('.links');
@@ -165,26 +164,18 @@ const BioDigitalSankeyApp = () => {
         const hasBlueOverlay = d3.select(`[data-original-link="${linkIndex}"]`).node();
         
         if (hasBlueOverlay) {
-          // Remove dimming from this specific blue overlay since it will have green on top
-          d3.select(`[data-original-link="${linkIndex}"].link-overlay-blue`)
-            .classed('link-overlay-blue-dimmed', false);
-          
           const greenStrokeWidth = Math.max(2, linkIntersectionCount * 2);
           
           linkGroup.append('path')
             .attr('class', 'link-overlay link-overlay-green')
             .attr('data-original-link', linkIndex)
             .attr('d', createLinkPath(link.source, link.target))
-            .style('stroke', '#10b981')
-            .style('stroke-width', `${greenStrokeWidth}px`)
-            .style('fill', 'none')
-            .style('opacity', 0.9)
-            .style('pointer-events', 'none');
+            .style('stroke-width', `${greenStrokeWidth}px`);
         }
       }
     });
     
-    // Green highlight nodes
+    // Add green styling to nodes (no manual opacity changes)
     currentGraph.current.nodes.forEach((n, nIndex) => {
       const nodeSystemIds = n.systems.map(s => s.name || JSON.stringify(s));
       const nodeIntersectionCount = nodeSystemIds.filter(id => intersectionSystemIds.includes(id)).length;
@@ -198,6 +189,29 @@ const BioDigitalSankeyApp = () => {
         }
       }
     });
+  }, []);
+
+  const applyClickedElementStyling = useCallback((elementIndex, isLink) => {
+    if (isLink) {
+      const blueOverlay = d3.select(`[data-original-link="${elementIndex}"].link-overlay-blue`);
+      if (blueOverlay.node()) {
+        // Get the actual stroke width of the blue overlay
+        const blueStrokeWidth = parseFloat(blueOverlay.style('stroke-width')) || 4;
+        const outlineWidth = blueStrokeWidth + 4; // 2px on each side
+        
+        const linkGroup = d3.select('.links');
+        const blueOverlayNode = blueOverlay.node();
+        
+        linkGroup.insert('path', function() { return blueOverlayNode; })
+          .attr('class', 'clicked-link-outline')
+          .attr('data-clicked-link', elementIndex)
+          .attr('d', createLinkPath(currentGraph.current.links[elementIndex].source, currentGraph.current.links[elementIndex].target))
+          .style('stroke-width', `${outlineWidth}px`);
+      }
+    } else {
+      d3.select(`[data-node-id="${elementIndex}"]`)
+        .classed('clicked-element', true);
+    }
   }, []);
 
   const unfreezeHighlight = useCallback(() => {
@@ -289,8 +303,9 @@ const BioDigitalSankeyApp = () => {
         } else {
           d3.selectAll('.link-overlay-green').remove();
           d3.selectAll('.node rect').classed('node-additional', false);
-          // Remove dimming from blue overlays
           d3.selectAll('.link-overlay-blue').classed('link-overlay-blue-dimmed', false);
+          // Remove green highlighting active class
+          d3.select('body').classed('green-highlighting-active', false);
         }
         d3.select('.tooltip').style('opacity', 0);
       },
@@ -316,24 +331,10 @@ const BioDigitalSankeyApp = () => {
             setTimeout(() => {
               applyFrozenHighlighting(element.systems);
               
-              // Add clicked indicator
-              if (isLink) {
-                const blueOverlay = d3.select(`[data-original-link="${elementIndex}"].link-overlay-blue`);
-                if (blueOverlay.node()) {
-                  const linkGroup = d3.select('.links');
-                  const blueOverlayNode = blueOverlay.node();
-                  
-                  linkGroup.insert('path', function() { return blueOverlayNode; })
-                    .attr('class', 'clicked-link-outline')
-                    .attr('data-clicked-link', elementIndex)
-                    .attr('d', createLinkPath(element.source, element.target));
-                }
-              } else {
-                d3.select(`[data-node-id="${elementIndex}"]`)
-                  .classed('clicked-element', true);
-              }
+              // Apply clicked styling using shared function
+              applyClickedElementStyling(elementIndex, isLink);
               
-              // Re-enable transitions after highlighting is applied
+              // Re-enable transitions
               setTimeout(() => {
                 d3.select('body').classed('no-flash', false);
               }, 100);
@@ -457,34 +458,17 @@ const BioDigitalSankeyApp = () => {
 
   const handleModalClose = useCallback(() => {
     setShowDetailModal(false);
-    
+  
     // Restore frozen highlighting if it exists
     if (isFrozen && frozenHighlight && clickedElement) {
       setTimeout(() => {
         applyFrozenHighlighting(frozenHighlight);
         
-        // Reapply clicked element styling
-        if (clickedElement.isLink) {
-          // Recreate the dotted path outline behind the blue overlay
-          const link = currentGraph.current.links[clickedElement.index];
-          const blueOverlay = d3.select(`[data-original-link="${clickedElement.index}"].link-overlay-blue`);
-          
-          if (blueOverlay.node()) {
-            const linkGroup = d3.select('.links');
-            const blueOverlayNode = blueOverlay.node();
-            
-            linkGroup.insert('path', function() { return blueOverlayNode; })
-              .attr('class', 'clicked-link-outline')
-              .attr('data-clicked-link', clickedElement.index)
-              .attr('d', createLinkPath(link.source, link.target));
-          }
-        } else {
-          d3.select(`[data-node-id="${clickedElement.index}"]`)
-            .classed('clicked-element', true);
-        }
+        // Reapply clicked element styling using shared function
+        applyClickedElementStyling(clickedElement.index, clickedElement.isLink);
       }, 100);
     }
-  }, [isFrozen, frozenHighlight, clickedElement]);
+  }, [isFrozen, frozenHighlight, clickedElement, applyClickedElementStyling]);
 
   // Highlighting functions
   const highlightCompleteFlows = useCallback((targetSystems, isFrozenHighlight = false, isAdditionalHighlight = false) => {
@@ -514,11 +498,7 @@ const BioDigitalSankeyApp = () => {
             .attr('class', 'link-overlay link-overlay-blue temporary-highlight')
             .attr('data-original-link', linkIndex)
             .attr('d', createLinkPath(link.source, link.target))
-            .style('stroke', '#2563eb')
-            .style('stroke-width', `${strokeWidth}px`)
-            .style('fill', 'none')
-            .style('opacity', 0.8)
-            .style('pointer-events', 'none');
+            .style('stroke-width', `${strokeWidth}px`);
         }
       });
       
@@ -955,9 +935,6 @@ const BioDigitalSankeyApp = () => {
         .attr('d', createLinkPath(link.source, link.target))
         .attr('stroke', colorScale(link.source.category))
         .style('stroke-width', Math.max(2, link.value * 2) + 'px')
-        .attr('fill', 'none')
-        .style('opacity', 0.5)
-        .style('cursor', 'pointer')
         .on('mouseover', handlers.mouseover)
         .on('mouseout', handlers.mouseout)
         .on('click', handlers.click)
@@ -1017,7 +994,7 @@ const BioDigitalSankeyApp = () => {
         .text(text);
     });
 
-  }, [filteredData, visibleColumns, createSankeyData, loading, error, allColumns, columnLabels, isFrozen, unfreezeHighlight, createElementHandlers]);
+  }, [filteredData, visibleColumns, createSankeyData, loading, error, allColumns, columnLabels, createElementHandlers]);
 
   // Effects
   useEffect(() => {
@@ -1035,6 +1012,7 @@ const BioDigitalSankeyApp = () => {
   }, [data, activeFilters]);
 
   useEffect(() => {
+    console.log('Effect 1: filteredData/activeFilters/isFrozen changed');
     if (activeFilters.length > 0 && currentGraph.current) {
       if (isFrozen) {
         highlightCompleteFlows(filteredData, false, true);
@@ -1047,6 +1025,7 @@ const BioDigitalSankeyApp = () => {
   }, [filteredData, activeFilters, isFrozen, highlightCompleteFlows, resetHighlighting]);
 
   useEffect(() => {
+    console.log('Effect 2: drawSankey dependency changed');
     drawSankey();
   }, [drawSankey]);
 
