@@ -231,7 +231,6 @@ body, html {
 
 /* Links */
 .link {
-  transition: opacity var(--transition-xfast), stroke-width var(--transition-xfast), stroke var(--transition-xfast);
   fill: none;
   opacity: 0.5;
   cursor: pointer;
@@ -269,7 +268,6 @@ body, html {
 
 /* Nodes */
 .node rect {
-  transition: opacity var(--transition-xfast), fill var(--transition-xfast);
 }
 
 .node rect.node-highlighted {
@@ -293,6 +291,11 @@ body, html {
 
 .green-highlighting-active .node rect.node-highlighted:not(.node-additional) {
   opacity: 0.3 !important;
+}
+
+.green-highlighting-active .node rect.node-highlighted:not(.node-additional) ~ text {
+  fill: var(--color-highlight) !important;
+  opacity: 0.6 !important;
 }
 
 /* Zoom controls */

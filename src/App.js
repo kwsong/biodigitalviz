@@ -52,6 +52,7 @@ const BioDigitalSankeyApp = () => {
   const [isFrozen, setIsFrozen] = useState(false);
   const [clickedElement, setClickedElement] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
 
   // Refs
   const svgRef = useRef();
@@ -326,8 +327,19 @@ const BioDigitalSankeyApp = () => {
             // Disable transitions to prevent flash
             d3.select('body').classed('no-flash', true);
             
+            // Store node information for restoration
+            const elementData = isLink ? {
+              index: elementIndex,
+              isLink: true
+            } : {
+              index: elementIndex,
+              isLink: false,
+              nodeCategory: element.category,
+              nodeName: element.name
+            };
+            
             setFrozenHighlight(element.systems);
-            setClickedElement({ index: elementIndex, isLink });
+            setClickedElement(elementData);
             setIsFrozen(true);
             
             setTimeout(() => {
@@ -632,41 +644,50 @@ const BioDigitalSankeyApp = () => {
       });
     });
 
+    // Create links that can span empty columns
     systems.forEach(system => {
-      for (let i = 0; i < visibleColumns.length - 1; i++) {
+      for (let i = 0; i < visibleColumns.length; i++) {
         const colA = visibleColumns[i];
-        const colB = visibleColumns[i + 1];
-        
         const valuesA = normalizeToArray(system[colA]);
-        const valuesB = normalizeToArray(system[colB]);
-
-        valuesA.forEach(sourceValue => {
-          valuesB.forEach(targetValue => {
-            if (!sourceValue || !targetValue) return;
-            
-            const sourceId = `${colA}-${sourceValue}`;
-            const targetId = `${colB}-${targetValue}`;
-            
-            const existingLink = links.find(l => l.source.id === sourceId && l.target.id === targetId);
-
-            if (existingLink) {
-              existingLink.value += 1;
-              existingLink.systems.push(system);
-            } else {
-              const sourceNode = nodeMap.get(sourceId);
-              const targetNode = nodeMap.get(targetId);
+        
+        if (valuesA.length === 0) continue; // Skip if this column has no data for this system
+        
+        // Find the next column that has data for this system
+        for (let j = i + 1; j < visibleColumns.length; j++) {
+          const colB = visibleColumns[j];
+          const valuesB = normalizeToArray(system[colB]);
+          
+          if (valuesB.length === 0) continue; // Skip empty columns
+          
+          // Found the next column with data - create links
+          valuesA.forEach(sourceValue => {
+            valuesB.forEach(targetValue => {
+              const sourceId = `${colA}-${sourceValue}`;
+              const targetId = `${colB}-${targetValue}`;
               
-              if (sourceNode && targetNode) {
-                links.push({
-                  source: sourceNode,
-                  target: targetNode,
-                  value: 1,
-                  systems: [system]
-                });
+              const existingLink = links.find(l => l.source.id === sourceId && l.target.id === targetId);
+
+              if (existingLink) {
+                existingLink.value += 1;
+                existingLink.systems.push(system);
+              } else {
+                const sourceNode = nodeMap.get(sourceId);
+                const targetNode = nodeMap.get(targetId);
+                
+                if (sourceNode && targetNode) {
+                  links.push({
+                    source: sourceNode,
+                    target: targetNode,
+                    value: 1,
+                    systems: [system]
+                  });
+                }
               }
-            }
+            });
           });
-        });
+          
+          break; // Stop after finding the first column with data
+        }
       }
     });
 
@@ -880,7 +901,7 @@ const BioDigitalSankeyApp = () => {
 
     // Column labels and drag functionality
     const columnLabelsGroup = mainGroup.append('g').attr('class', 'column-labels');
-    
+
     visibleColumns.forEach((column, columnIndex) => {
       const labelX = margin.left + (visibleColumns.length === 1 ? 0 : columnIndex * columnWidth) + nodeWidth / 2;
       const labelY = margin.top - 20;
@@ -903,15 +924,111 @@ const BioDigitalSankeyApp = () => {
         .style('font-weight', '800')
         .text(columnLabels[allColumns.indexOf(column)]);
       
-      // Drag functionality (simplified from original)
+      // drag functionality
       labelGroup.call(d3.drag()
         .on('start', function (event) {
           draggedElement.current = column;
+          setIsDragging(true);
           d3.select(this).style('opacity', 0.7);
+        })
+        .on('drag', function(event) {
+          const deltaX = event.x - event.subject.x;
+          const deltaY = event.y - event.subject.y;
+          
+          // Move the label group
+          d3.select(this).attr('transform', `translate(${deltaX}, ${deltaY})`);
+          
+          // Move all nodes in this column
+          const nodesInColumn = graph.nodes.filter(n => n.category === column);
+          nodesInColumn.forEach((node, nodeIndex) => {
+            const originalNodeIndex = graph.nodes.indexOf(node);
+            
+            // Move the node rectangle
+            d3.select(`[data-node-id="${originalNodeIndex}"]`)
+              .attr('transform', `translate(${deltaX}, ${deltaY})`);
+            
+            // Move the node text
+            d3.select(`.node:nth-child(${originalNodeIndex + 1}) text`)
+              .attr('transform', `translate(${deltaX}, ${deltaY})`);
+          });
+          
+          // Update ALL links including overlay links by their data attributes
+          graph.links.forEach((link, linkIndex) => {
+            if (link.source.category === column || link.target.category === column) {
+              // Recalculate link path with temporary node positions
+              const sourceX = link.source.category === column ? link.source.x + deltaX : link.source.x;
+              const sourceY = link.source.category === column ? link.source.y + deltaY : link.source.y;
+              const targetX = link.target.category === column ? link.target.x + deltaX : link.target.x;
+              const targetY = link.target.category === column ? link.target.y + deltaY : link.target.y;
+              
+              const tempSource = { x: sourceX, y: sourceY, width: link.source.width, height: link.source.height };
+              const tempTarget = { x: targetX, y: targetY, width: link.target.width, height: link.target.height };
+              const newPath = createLinkPath(tempSource, tempTarget);
+              
+              // Update original link
+              d3.select(`[data-link-id="${linkIndex}"]`).attr('d', newPath);
+              
+              // Update blue overlay link
+              d3.select(`[data-original-link="${linkIndex}"].link-overlay-blue`).attr('d', newPath);
+              
+              // Update green overlay link
+              d3.select(`[data-original-link="${linkIndex}"].link-overlay-green`).attr('d', newPath);
+              
+              // Update clicked link outline
+              d3.select(`[data-clicked-link="${linkIndex}"]`).attr('d', newPath);
+            }
+          });
         })
         .on('end', function (event) {
           d3.select(this).style('opacity', 1);
-          // Add reorder logic here if needed
+          d3.select(this).attr('transform', null);
+          
+          // Reset all node and text transforms
+          d3.selectAll('.node rect').attr('transform', null);
+          d3.selectAll('.node text').attr('transform', null);
+          
+          // Determine target column based on final position
+          const finalX = labelX + event.x - event.subject.x;
+          let targetColumnIndex = Math.round((finalX - margin.left) / columnWidth);
+          targetColumnIndex = Math.max(0, Math.min(visibleColumns.length - 1, targetColumnIndex));
+          
+          const targetColumn = visibleColumns[targetColumnIndex];
+          
+          // Store frozen state before any changes
+          const wasFrozen = isFrozen;
+          const frozenSystems = frozenHighlight;
+          const clickedElementData = clickedElement;
+          
+          // Only reorder if we're dropping on a different column
+          if (targetColumn && targetColumn !== column) {
+            // If we're reordering columns while frozen, just unfreeze everything
+            if (isFrozen) {
+              unfreezeHighlight();
+            }
+            
+            handleColumnReorder(column, targetColumn);
+          } else {
+            // Column didn't move - restore frozen highlighting if it was active
+            if (wasFrozen && frozenSystems) {
+              setTimeout(() => {
+                // The graph structure hasn't changed, so we can reapply highlighting
+                if (currentGraph.current) {
+                  applyFrozenHighlighting(frozenSystems);
+                  
+                  // For clicked element, restore styling
+                  if (clickedElementData && !clickedElementData.isLink) {
+                    // Since column order didn't change, the node index should still be valid
+                    applyClickedElementStyling(clickedElementData.index, false);
+                  } else if (clickedElementData && clickedElementData.isLink) {
+                    // For links, also restore if the index is still valid
+                    applyClickedElementStyling(clickedElementData.index, true);
+                  }
+                }
+              }, 50);
+            }
+          }
+          
+          setIsDragging(false);
           draggedElement.current = null;
         })
       );
@@ -1106,8 +1223,10 @@ const BioDigitalSankeyApp = () => {
 
   useEffect(() => {
     console.log('Effect 2: drawSankey dependency changed');
-    drawSankey();
-  }, [drawSankey]);
+    if (!isDragging) {
+      drawSankey();
+    }
+  }, [drawSankey, isDragging]);
 
   // Responsive resize handler
   useEffect(() => {
