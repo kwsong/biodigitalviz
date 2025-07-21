@@ -153,7 +153,7 @@ const BioDigitalSankeyApp = () => {
     // Add class to indicate green highlighting is active
     d3.select('body').classed('green-highlighting-active', true);
     
-    // Dim ALL blue overlay links
+    // Dim ALL blue overlay links and dotted outlines
     d3.selectAll('.link-overlay-blue').classed('link-overlay-blue-dimmed', true);
     
     const linkGroup = d3.select('.links');
@@ -296,7 +296,7 @@ const BioDigitalSankeyApp = () => {
             .style('opacity', 1)
             .html(getTooltipContent())
             .style('left', (event.pageX + 10) + 'px')
-            .style('top', (event.pageY - 28) + 'px');
+            .style('top', (event.pageY +10) + 'px');
         }
       },
 

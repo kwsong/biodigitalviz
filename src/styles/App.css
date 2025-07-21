@@ -263,7 +263,8 @@ body, html {
 }
 
 .link-overlay-blue-dimmed {
-  opacity: 0.3 !important;
+  stroke: #c1d7f8 !important;
+  opacity: 1 !important;
 }
 
 /* Nodes */
@@ -384,7 +385,7 @@ body, html {
   fill: none !important;
   stroke: var(--color-text-primary) !important;
   stroke-dasharray: 2,2 !important; /* Very dense dotted pattern */
-  stroke-opacity: 0.8 !important;
+  stroke-opacity: 1 !important;
   pointer-events: none !important;
 }
 
