@@ -1,0 +1,82 @@
+[0,0] Tardigotchi (2010)
+[0,1] Pac-Euglena (2020)
+[0,2] BIO-ELECTRÓLISIS (2022)
+[0,3] Nukabot (2021)
+[0,4] Slime Mould Logic Gates Based on Frequency Changes of Electrical Potential Oscillation (2014)
+[0,5] Cyano-chromic Interface: Aligning Human-Microbe Temporalities Towards Noticing and Attending to Living Artefacts (2023)
+[0,6] Integrating Living Organisms in Devices to Implement Care-based Interactions (2022)
+[0,7] Towards a biohybrid sensing platform built on impedance-based
+bacterial flagellar motor tachometry (2017)
+[0,8] Trap it!
+ (2015)
+[0,9] Addressing Uncertainty in Biodesign through Digital Twins:
+A Case of Biofabrication with Mycelium (2024)
+[0,10] Mold Sounds: Queering Ecologies in Polyphonic Material Explorations (2025)
+[0,11] Biological Optical-to-Chemical Signal Conversion Interface: A Small-Scale Modulator for Molecular Communications (2018)
+[1,0] Physarum-Based Memristors
+for Computer Music (2016)
+[1,1] Archean Memory Farm (2022)
+[1,2] The crucible (2008)
+[1,3] GFP – SCREEN  (2015)
+[1,4] Programming Living Cells to Function as Massively
+Parallel Computers (2007)
+[1,5] ALICE (2020)
+[1,6] Biotic games: Enlightenment’, ‘Ciliaball’, ‘PAC-mecium’, ‘Microbash’, ‘Biotic Pinball’, ‘POND PONG’, ‘PolymerRace’, and ‘The Prisoner's Smellemma’. (2010)
+[1,7] Living Light Interface (2021)
+[1,8] Biodegradable Implant (2024)
+[1,9] MicroAquarium (2020)
+[1,10] Biocomputer Rhythms (2019)
+[1,11] Microscopic opera (2011)
+[2,0] Biota Beats (2016)
+[2,1] Sensorimotor control of robots mediated by electrophysiological measurements of fungal mycelia (2024)
+[2,2] Caravel (2016)
+[2,3] Ecobot II
+ (2005)
+[2,4] BioArtBot (2019)
+[2,5] CMD (2019)
+[2,6] Precisely Navigated Biobot Swarms of Bacteria Magnetospirillum magneticum for Water Decontamination
+ (2023)
+[2,7] Microbial biofilms for electricity generation from water evaporation and power to wearables
+ (2022)
+[2,8] Flea Circus (2006)
+[2,9] bixels (2017)
+[2,10] Urban Algae Canopy
+ (2015)
+[2,11] Rafigh (2014)
+[3,0] Reactive fungal wearable (2021)
+[3,1] Bio-Digital Calendar (2024)
+[3,2] Stress-o-stat (2011)
+[3,3] Living Things (2020)
+[3,4] Microbial home (2011)
+[3,5] Beauty: Explorations of Machine-Microbial Agencies
+ (2023)
+[3,6] Cryptographic Beings (2022)
+[3,7] Microbial Sonorities  (2017)
+[3,8] Algae Alight (2024)
+[3,9] Slimo City (2025)
+[3,10] Magnetotactic Microrobot (2006)
+[3,11] Let the Microbes Power your Sensing Display (2017)
+[4,0] Living Mirror (2013)
+[4,1] Mould rush (2018)
+[4,2] LudusScope: Accessible Interactive Smartphone Microscopy for Life-Science Education (2016)
+[4,3] EuglPollock (2022)
+[4,4] Where Species Meet (Zones de contact) (2016)
+[4,5] Mining logical circuits in fungi
+ (2022)
+[4,6] Living Screens (2017)
+[4,7] BioGraphr (2016)
+[4,8] POND (2020)
+[4,9] Micro-Rhythms (2016)
+[4,10] Long range wireless sensing
+powered by plant-microbial fuel cell (2017)
+[4,11] Symbiotic Machine (2014)
+[5,0] Ctrl (2022)
+[5,1] Biohybrid microswimmer (2025)
+[5,2] Bacterbrain (2019)
+[5,3] Mold Printer (2024)
+[5,4] Bacterial Networked Electronic Interface (2022)
+[5,5] Tangible Interactive Microbiology for Informal Science Education
+ (2015)
+[5,6] Algae relay (2023)
+[5,7] Light-deformable microrobots shape up for the biological obstacle course (2024)
+[5,8] BioSoNot (2017)

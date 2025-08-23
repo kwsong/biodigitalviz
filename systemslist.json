@@ -1,0 +1,2540 @@
+{
+  "data": [
+    {
+      "id": "rec0vGe67DcBwf0Ly",
+      "name": "Tardigotchi",
+      "author": "Douglas Easterly et al.",
+      "img_name": "Tardigotchi.jpg",
+      "doi": "10.1145/1935701.1935795",
+      "year": 2010,
+      "gmo": "",
+      "url": "https://dl.acm.org/doi/pdf/10.1145/1935701.1935795",
+      "organism": [
+        "microanimal (tardigrade)"
+      ],
+      "trigger": [
+        "nutrients"
+      ],
+      "output": [
+        "movement"
+      ],
+      "scale": [
+        "organism"
+      ],
+      "temporality": [
+        "≤ 1 second"
+      ],
+      "temporality2": [
+        "random"
+      ],
+      "role-organism": [
+        "none"
+      ],
+      "role-digital": [
+        "power (maintain life)",
+        "output (connect to humans)"
+      ],
+      "evolution": ""
+    },
+    {
+      "id": "rec259EIPZope894o",
+      "name": "Pac-Euglena",
+      "author": "Amy T. Lam et al.",
+      "img_name": "pac_eugelena.png",
+      "doi": "10.1145/3313831.3376378",
+      "year": 2020,
+      "gmo": "",
+      "url": "https://dl.acm.org/doi/10.1145/3313831.3376378",
+      "organism": [
+        "protozoa (Euglena)"
+      ],
+      "trigger": [
+        "light"
+      ],
+      "output": [
+        "movement"
+      ],
+      "scale": [
+        "organism",
+        "cell"
+      ],
+      "temporality": [
+        "≤ 1 second"
+      ],
+      "temporality2": [
+        "transient"
+      ],
+      "role-organism": [
+        "transformation"
+      ],
+      "role-digital": [
+        "input (activate)",
+        "output (connect to humans)"
+      ],
+      "evolution": ""
+    },
+    {
+      "id": "rec2iLylPwsEDvZ6T",
+      "name": "BIO-ELECTRÓLISIS",
+      "author": "Gilberto Esparza",
+      "img_name": "https://gilbertoesparza.net/wp-content/uploads/2023/01/IMG_8819-222x140.jpg",
+      "doi": "",
+      "year": 2022,
+      "gmo": "",
+      "url": "https://gilbertoesparza.net/portfolio/bio-electrolisis/",
+      "organism": [
+        "bacteria (Geobacter sulfurreducens)"
+      ],
+      "trigger": [
+        "moisture"
+      ],
+      "output": [
+        "electrical"
+      ],
+      "scale": [
+        "population"
+      ],
+      "temporality": [
+        "≤ 1 hour"
+      ],
+      "temporality2": [
+        "progressive"
+      ],
+      "role-organism": [
+        "power"
+      ],
+      "role-digital": [
+        "none"
+      ],
+      "evolution": ""
+    },
+    {
+      "id": "rec3NPMI6kAR0r4Gg",
+      "name": "Nukabot",
+      "author": "Dominique Chen et al.",
+      "img_name": "nukabot.png",
+      "doi": "10.1145/3411763.3451605",
+      "year": 2021,
+      "gmo": "",
+      "url": "https://dl.acm.org/doi/10.1145/3411763.3451605",
+      "organism": [
+        "bacteria (lactic acid)",
+        "bacteria (human body)",
+        "bacteria (vegetables)"
+      ],
+      "trigger": [
+        "nutrients",
+        "mechanical"
+      ],
+      "output": [
+        "gas",
+        "electrical",
+        "temperature",
+        "chemical"
+      ],
+      "scale": [
+        "ecosystem"
+      ],
+      "temporality": [
+        "≤ 1 day"
+      ],
+      "temporality2": [
+        "progressive"
+      ],
+      "role-organism": [
+        "transformation"
+      ],
+      "role-digital": [
+        "output (connect to humans)",
+        "transformation"
+      ],
+      "evolution": ""
+    },
+    {
+      "id": "rec4lMbNsSrUVvtT9",
+      "name": "Slime Mould Logic Gates Based on Frequency Changes of Electrical Potential Oscillation",
+      "author": "James G.H. Whiting et al.",
+      "img_name": "logic-gate.jpg",
+      "doi": "10.1016/j.biosystems.2014.08.001",
+      "year": 2014,
+      "gmo": "",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/25102081/",
+      "organism": [
+        "slime mould (Physarum polycephalum)"
+      ],
+      "trigger": [
+        "electrical"
+      ],
+      "output": [
+        "electrical"
+      ],
+      "scale": [
+        "organism",
+        "cell"
+      ],
+      "temporality": [
+        "≤ 1 hour"
+      ],
+      "temporality2": [
+        "transient",
+        "spike train"
+      ],
+      "role-organism": [
+        "transformation",
+        "evaluation/comparison"
+      ],
+      "role-digital": [
+        "none"
+      ],
+      "evolution": ""
+    },
+    {
+      "id": "rec7GXiuEwqtwhpi1",
+      "name": "Cyano-chromic Interface: Aligning Human-Microbe Temporalities Towards Noticing and Attending to Living Artefacts",
+      "author": "Jiwei Zhou et al.",
+      "img_name": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTl-H34pzQGevJQS7hOxvAH0Wnxk__ysV9Spg&s",
+      "doi": "10.1145/3563657.3596132",
+      "year": 2023,
+      "gmo": "",
+      "url": "https://dl.acm.org/doi/10.1145/3563657.3596132",
+      "organism": [
+        "cyanobacteria"
+      ],
+      "trigger": [
+        "light"
+      ],
+      "output": [
+        "growth",
+        "electrical"
+      ],
+      "scale": [
+        "population"
+      ],
+      "temporality": [
+        "≤ 1 hour"
+      ],
+      "temporality2": [
+        "transient"
+      ],
+      "role-organism": [
+        "power",
+        "input"
+      ],
+      "role-digital": [
+        "output (connect to humans)",
+        "transformation",
+        "memory/state"
+      ],
+      "evolution": ""
+    },
+    {
+      "id": "rec7biTjRspdNV0Jk",
+      "name": "Integrating Living Organisms in Devices to Implement Care-based Interactions",
+      "author": "Jasmine Lu and Pedro Lopes",
+      "img_name": "slime_watch.png",
+      "doi": "10.1145/3526113.3545629",
+      "year": 2022,
+      "gmo": "",
+      "url": "https://dl.acm.org/doi/10.1145/3526113.3545629",
+      "organism": [
+        "slime mould (Physarum polycephalum)"
+      ],
+      "trigger": [
+        "nutrients"
+      ],
+      "output": [
+        "growth"
+      ],
+      "scale": [
+        "organism",
+        "cell"
+      ],
+      "temporality": [
+        "≤ 1 hour"
+      ],
+      "temporality2": [
+        "transient"
+      ],
+      "role-organism": [
+        "selection/routing"
+      ],
+      "role-digital": [
+        "evaluation/comparison"
+      ],
+      "evolution": ""
+    },
+    {
+      "id": "rec7pzLxpyGafvAZy",
+      "name": "Towards a biohybrid sensing platform built on impedance-based\nbacterial flagellar motor tachometry",
+      "author": "Tom J. Zajdel et al.",
+      "img_name": "biohybrid_sensing.png",
+      "doi": "10.1109/BIOCAS.2017.8325135",
+      "year": 2017,
+      "gmo": true,
+      "url": "https://ieeexplore-ieee-org.tudelft.idm.oclc.org/document/8325135",
+      "organism": [
+        "bacteria (E. coli) (gmo)"
+      ],
+      "trigger": [
+        "chemical"
+      ],
+      "output": [
+        "movement"
+      ],
+      "scale": [
+        "cell",
+        "organism"
+      ],
+      "temporality": [
+        "≤ 1 second"
+      ],
+      "temporality2": [],
+      "role-organism": [
+        "input"
+      ],
+      "role-digital": [
+        "evaluation/comparison",
+        "transformation"
+      ],
+      "evolution": ""
+    },
+    {
+      "id": "rec7rilZCgS5847fQ",
+      "name": "Trap it!\n",
+      "author": "Seung Ah Lee et al.",
+      "img_name": "https://i.ytimg.com/vi/eixmJqiRVMw/maxresdefault.jpg",
+      "doi": "10.1145/2702123.2702220",
+      "year": 2015,
+      "gmo": "",
+      "url": "https://dl.acm.org/doi/10.1145/2702123.2702220",
+      "organism": [
+        "protozoa (Euglena)"
+      ],
+      "trigger": [
+        "light"
+      ],
+      "output": [
+        "movement"
+      ],
+      "scale": [
+        "organism",
+        "cell"
+      ],
+      "temporality": [
+        "≤ 1 second"
+      ],
+      "temporality2": [
+        "transient"
+      ],
+      "role-organism": [
+        "transformation"
+      ],
+      "role-digital": [
+        "output (connect to humans)",
+        "input (activate)"
+      ],
+      "evolution": ""
+    },
+    {
+      "id": "rec8jlyvmmOmuX73l",
+      "name": "Addressing Uncertainty in Biodesign through Digital Twins:\nA Case of Biofabrication with Mycelium",
+      "author": "Đan Vy Vu et al.",
+      "img_name": "https://dl.acm.org/cms/10.1145/3685271/asset/ade6afb0-1138-461d-af50-28d1977a33db/assets/images/medium/tochi-2023-0198-f04.jpg",
+      "doi": "10.1145/3685271",
+      "year": 2024,
+      "gmo": "",
+      "url": "https://dl-acm-org.tudelft.idm.oclc.org/doi/10.1145/3685271",
+      "organism": [
+        "fungal mycelia"
+      ],
+      "trigger": [
+        "none"
+      ],
+      "output": [
+        "growth"
+      ],
+      "scale": [
+        "organism"
+      ],
+      "temporality": [
+        "unknown"
+      ],
+      "temporality2": [],
+      "role-organism": [
+        "input"
+      ],
+      "role-digital": [
+        "power (maintain life)"
+      ],
+      "evolution": ""
+    },
+    {
+      "id": "rec8mEHqIhfEDNVOt",
+      "name": "Mold Sounds: Queering Ecologies in Polyphonic Material Explorations",
+      "author": "Alexandra Teixeira Riggs et al.",
+      "img_name": "mould.jpg",
+      "doi": "10.1145/3689050.3704417",
+      "year": 2025,
+      "gmo": "",
+      "url": "https://dl.acm.org/doi/10.1145/3689050.3704417",
+      "organism": [
+        "mold"
+      ],
+      "trigger": [
+        "nutrients"
+      ],
+      "output": [
+        "growth"
+      ],
+      "scale": [
+        "population"
+      ],
+      "temporality": [
+        "≤ 1 week"
+      ],
+      "temporality2": [
+        "progressive"
+      ],
+      "role-organism": [
+        "input",
+        "selection/routing"
+      ],
+      "role-digital": [
+        "output (connect to humans)",
+        "transformation"
+      ],
+      "evolution": ""
+    },
+    {
+      "id": "recA14OWeahTTCSsv",
+      "name": "Biological Optical-to-Chemical Signal Conversion Interface: A Small-Scale Modulator for Molecular Communications",
+      "author": "Laura Grebenstein et al.",
+      "img_name": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSxqxW52V4BUk-uskpJMVuvT1kTnNl1XLpPRw&s",
+      "doi": "10.1109/TNB.2018.2870910",
+      "year": 2018,
+      "gmo": true,
+      "url": "https://ieeexplore-ieee-org.tudelft.idm.oclc.org/document/8467351",
+      "organism": [
+        "bacteria (E. coli) (gmo)"
+      ],
+      "trigger": [
+        "light"
+      ],
+      "output": [
+        "chemical"
+      ],
+      "scale": [
+        "cell",
+        "organism"
+      ],
+      "temporality": [
+        "≤ 1 minute"
+      ],
+      "temporality2": [],
+      "role-organism": [
+        "transformation",
+        "output"
+      ],
+      "role-digital": [
+        "input (activate)",
+        "evaluation/comparison"
+      ],
+      "evolution": ""
+    },
+    {
+      "id": "recAO9Iml1nA2l3Lc",
+      "name": "Physarum-Based Memristors\nfor Computer Music",
+      "author": "Edward Braund",
+      "img_name": "https://www.google.com/url?sa=i&url=https%3A%2F%2Flink.springer.com%2Fchapter%2F10.1007%2F978-3-319-26662-6_34&psig=AOvVaw17uN-ufE6dnNZWqHmzNi20&ust=1755596269707000&source=images&cd=vfe&opi=89978449&ved=0CBUQjRxqFwoTCJi5hvKHlI8DFQAAAAAdAAAAABAE",
+      "doi": "10.1007/978-3-319-26662-6_34",
+      "year": 2016,
+      "gmo": "",
+      "url": "https://link.springer.com/chapter/10.1007/978-3-319-26662-6_34",
+      "organism": [
+        "slime mould (Physarum polycephalum)"
+      ],
+      "trigger": [
+        "electrical"
+      ],
+      "output": [
+        "electrical"
+      ],
+      "scale": [
+        "cell",
+        "organism"
+      ],
+      "temporality": [
+        "≤ 1 minute"
+      ],
+      "temporality2": [
+        "transient"
+      ],
+      "role-organism": [
+        "transformation"
+      ],
+      "role-digital": [],
+      "evolution": ""
+    },
+    {
+      "id": "recAVx95oSh7Bl8bM",
+      "name": "Archean Memory Farm",
+      "author": "Where dogs run",
+      "img_name": "https://starts.eu/wp-content/uploads/Where-Dogs-Run_Archean-Memory-Farm_cover_Credit-WDR.jpg",
+      "doi": "10.1162/leon_a_02278",
+      "year": 2022,
+      "gmo": "",
+      "url": "https://direct.mit.edu/leon/article-abstract/55/6/570/113259/Archaean-Memory-Farm-Notes-on-the-Creation-Process",
+      "organism": [
+        "bacteria (Magnetospirillum)"
+      ],
+      "trigger": [
+        "magnetic"
+      ],
+      "output": [
+        "movement"
+      ],
+      "scale": [
+        "population"
+      ],
+      "temporality": [
+        "≤ 1 second"
+      ],
+      "temporality2": [],
+      "role-organism": [
+        "memory/state",
+        "input"
+      ],
+      "role-digital": [
+        "power (maintain life)",
+        "evaluation/comparison",
+        "transformation"
+      ],
+      "evolution": ""
+    },
+    {
+      "id": "recBwSfoFK5oevApg",
+      "name": "The crucible",
+      "author": "Allison Kudla",
+      "img_name": "crucible.jpg",
+      "doi": "",
+      "year": 2008,
+      "gmo": "",
+      "url": "http://allisonx.com/project/the-crucible/",
+      "organism": [
+        "cyanobacteria"
+      ],
+      "trigger": [
+        "light"
+      ],
+      "output": [
+        "growth"
+      ],
+      "scale": [
+        "population"
+      ],
+      "temporality": [
+        "≤ 1 week"
+      ],
+      "temporality2": [
+        "progressive"
+      ],
+      "role-organism": [
+        "output"
+      ],
+      "role-digital": [
+        "input (activate)"
+      ],
+      "evolution": ""
+    },
+    {
+      "id": "recD1Hv4x8tdyUmi4",
+      "name": "GFP – SCREEN ",
+      "author": "interspecifics",
+      "img_name": "gfp_screen.jpg",
+      "doi": "",
+      "year": 2015,
+      "gmo": true,
+      "url": "https://interspecifics.cc/work/gfp-screen-2015/",
+      "organism": [
+        "bacteria (E. coli) (gmo)"
+      ],
+      "trigger": [
+        "light"
+      ],
+      "output": [
+        "light"
+      ],
+      "scale": [
+        "population"
+      ],
+      "temporality": [
+        "≤ 1 second"
+      ],
+      "temporality2": [
+        "transient"
+      ],
+      "role-organism": [
+        "output"
+      ],
+      "role-digital": [
+        "input (activate)"
+      ],
+      "evolution": ""
+    },
+    {
+      "id": "recDeaiAsffOw9znk",
+      "name": "Programming Living Cells to Function as Massively\nParallel Computers",
+      "author": "Jeffrey J. Tabor",
+      "img_name": "parallel_computers.png",
+      "doi": "10.1145/1278480.1278642",
+      "year": 2007,
+      "gmo": true,
+      "url": "https://ieeexplore-ieee-org.tudelft.idm.oclc.org/document/4261262",
+      "organism": [
+        "bacteria (E. coli) (gmo)"
+      ],
+      "trigger": [
+        "light"
+      ],
+      "output": [
+        "optical effect"
+      ],
+      "scale": [
+        "population"
+      ],
+      "temporality": [
+        "unknown"
+      ],
+      "temporality2": [
+        "persistent"
+      ],
+      "role-organism": [
+        "output",
+        "transformation"
+      ],
+      "role-digital": [
+        "input (activate)"
+      ],
+      "evolution": ""
+    },
+    {
+      "id": "recEO9Vf36rkFWLet",
+      "name": "ALICE",
+      "author": "Rachel Armstrong et al.",
+      "img_name": "alice.jpg",
+      "doi": "",
+      "year": 2020,
+      "gmo": "",
+      "url": "https://alice-interface.eu/",
+      "organism": [
+        "bacteria (water)"
+      ],
+      "trigger": [
+        "nutrients",
+        "chemical"
+      ],
+      "output": [
+        "electrical"
+      ],
+      "scale": [
+        "ecosystem"
+      ],
+      "temporality": [
+        "≤ 1 hour"
+      ],
+      "temporality2": [
+        "progressive"
+      ],
+      "role-organism": [
+        "power"
+      ],
+      "role-digital": [
+        "output (connect to humans)",
+        "transformation"
+      ],
+      "evolution": ""
+    },
+    {
+      "id": "recEc3qD0ihh2bnys",
+      "name": "Biotic games: Enlightenment’, ‘Ciliaball’, ‘PAC-mecium’, ‘Microbash’, ‘Biotic Pinball’, ‘POND PONG’, ‘PolymerRace’, and ‘The Prisoner's Smellemma’.\r",
+      "author": "Ingmar H. Riedel-Kruse et al.",
+      "img_name": "https://pubs.rsc.org/en/Content/Image/GA/C0LC00399A",
+      "doi": "10.1039/C0LC00399A",
+      "year": 2010,
+      "gmo": "",
+      "url": "https://pubs.rsc.org/en/content/articlelanding/2011/lc/c0lc00399a",
+      "organism": [
+        "paramecia"
+      ],
+      "trigger": [
+        "electrical"
+      ],
+      "output": [
+        "movement"
+      ],
+      "scale": [
+        "organism",
+        "cell"
+      ],
+      "temporality": [
+        "≤ 1 second"
+      ],
+      "temporality2": [
+        "transient"
+      ],
+      "role-organism": [
+        "output",
+        "transformation"
+      ],
+      "role-digital": [
+        "input (activate)",
+        "output (connect to humans)"
+      ],
+      "evolution": ""
+    },
+    {
+      "id": "recFdKKylUtf0rvb2",
+      "name": "Living Light Interface\r",
+      "author": "Bahareh Barati et al.",
+      "img_name": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTqsXgfufFcurqY1ReGrl61gQuSur9ib9JVPg&s",
+      "doi": "10.1145/3461778.3462038",
+      "year": 2021,
+      "gmo": "",
+      "url": "https://dl.acm.org/doi/10.1145/3461778.3462038",
+      "organism": [
+        "protozoa (Dinoflagellates)"
+      ],
+      "trigger": [
+        "mechanical"
+      ],
+      "output": [
+        "light"
+      ],
+      "scale": [
+        "population"
+      ],
+      "temporality": [
+        "≤ 1 second"
+      ],
+      "temporality2": [],
+      "role-organism": [
+        "output",
+        "transformation"
+      ],
+      "role-digital": [
+        "input (activate)"
+      ],
+      "evolution": ""
+    },
+    {
+      "id": "recGHKlydu7Vau6Qn",
+      "name": "Biodegradable Implant",
+      "author": "Ahmet Bilir et al.",
+      "img_name": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRKoSwDpCerybK5dWA7kXFC0fHba5rLM66QxA&s",
+      "doi": "10.23919/EuCAP60739",
+      "year": 2024,
+      "gmo": true,
+      "url": "https://ieeexplore-ieee-org.tudelft.idm.oclc.org/document/10501075",
+      "organism": [
+        "bacteria (E. coli) (gmo)"
+      ],
+      "trigger": [
+        "pH",
+        "temperature",
+        "chemical"
+      ],
+      "output": [
+        "chemical"
+      ],
+      "scale": [
+        "cell",
+        "organism"
+      ],
+      "temporality": [
+        "≤ 1 second"
+      ],
+      "temporality2": [
+        "continuous (other)"
+      ],
+      "role-organism": [
+        "input",
+        "transformation"
+      ],
+      "role-digital": [
+        "evaluation/comparison"
+      ],
+      "evolution": ""
+    },
+    {
+      "id": "recGYrn2UDpVUcFi1",
+      "name": "MicroAquarium",
+      "author": "Kyungwon Lee et al.",
+      "img_name": "https://dl.acm.org/cms/attachment/html/10.1145/3334480.3383164/assets/html/images/chi20extendedabstracts-542-fig1.jpg",
+      "doi": "10.1145/3334480.3383164",
+      "year": 2020,
+      "gmo": "",
+      "url": "https://dl.acm.org/doi/10.1145/3334480.3383164",
+      "organism": [
+        "protozoa (Euglena)"
+      ],
+      "trigger": [
+        "light"
+      ],
+      "output": [
+        "movement"
+      ],
+      "scale": [
+        "organism",
+        "cell"
+      ],
+      "temporality": [
+        "≤ 1 second"
+      ],
+      "temporality2": [
+        "transient"
+      ],
+      "role-organism": [
+        "transformation"
+      ],
+      "role-digital": [
+        "output (connect to humans)",
+        "input (activate)"
+      ],
+      "evolution": ""
+    },
+    {
+      "id": "recH8IZ549UEXokTk",
+      "name": "Biocomputer Rhythms\r",
+      "author": "Eduardo Reck Miranda",
+      "img_name": "Biocomputer_Rhythms.png",
+      "doi": "10.26503/dl.v2016i1.753",
+      "year": 2019,
+      "gmo": "",
+      "url": "https://ars.electronica.art/keplersgardens/en/biocomputer-rhythms/",
+      "organism": [
+        "slime mould (Physarum polycephalum)"
+      ],
+      "trigger": [
+        "mechanical"
+      ],
+      "output": [
+        "electrical"
+      ],
+      "scale": [
+        "cell",
+        "organism"
+      ],
+      "temporality": [
+        "≤ 1 second"
+      ],
+      "temporality2": [],
+      "role-organism": [
+        "input",
+        "transformation"
+      ],
+      "role-digital": [
+        "adaptation",
+        "evaluation/comparison",
+        "input (activate)",
+        "transformation"
+      ],
+      "evolution": ""
+    },
+    {
+      "id": "recHvQZWL5m5690zG",
+      "name": "Microscopic opera",
+      "author": "Mathijs Munnik",
+      "img_name": "https://matthijsmunnik.nl/wp-content/uploads/2019/01/microscopic1.jpg",
+      "doi": "",
+      "year": 2011,
+      "gmo": "",
+      "url": "https://matthijsmunnik.nl/works/installation/microscopicopera/",
+      "organism": [
+        "microanimal (C. elegans)"
+      ],
+      "trigger": [
+        "none"
+      ],
+      "output": [
+        "movement"
+      ],
+      "scale": [
+        "organism"
+      ],
+      "temporality": [
+        "≤ 1 second"
+      ],
+      "temporality2": [
+        "random"
+      ],
+      "role-organism": [
+        "input"
+      ],
+      "role-digital": [
+        "transformation",
+        "output (connect to humans)"
+      ],
+      "evolution": ""
+    },
+    {
+      "id": "recJmxvwMpqPm1yPR",
+      "name": "Biota Beats",
+      "author": "EMW Street Bio team",
+      "img_name": "biota_beats.jpg",
+      "doi": "",
+      "year": 2016,
+      "gmo": "",
+      "url": "https://biotabeats.org/",
+      "organism": [
+        "bacteria (human body)"
+      ],
+      "trigger": [
+        "none"
+      ],
+      "output": [
+        "growth"
+      ],
+      "scale": [
+        "ecosystem"
+      ],
+      "temporality": [
+        "≤ 1 day"
+      ],
+      "temporality2": [
+        "progressive"
+      ],
+      "role-organism": [
+        "input"
+      ],
+      "role-digital": [
+        "transformation",
+        "output (connect to humans)",
+        "evaluation/comparison"
+      ],
+      "evolution": ""
+    },
+    {
+      "id": "recM1NrhEqJzoeBQD",
+      "name": "Sensorimotor control of robots mediated by electrophysiological measurements of fungal mycelia",
+      "author": "Anand Kumar Mishra et al.",
+      "img_name": "https://news.cornell.edu/sites/default/files/styles/story_thumbnail_lg/public/2024-08/figure-6a.jpg?itok=k73orNq_",
+      "doi": "10.1126/scirobotics.adk8019",
+      "year": 2024,
+      "gmo": "",
+      "url": "https://www.science.org/doi/10.1126/scirobotics.adk8019",
+      "organism": [
+        "fungal mycelia"
+      ],
+      "trigger": [
+        "light"
+      ],
+      "output": [
+        "electrical"
+      ],
+      "scale": [
+        "organism"
+      ],
+      "temporality": [
+        "≤ 1 minute"
+      ],
+      "temporality2": [
+        "transient",
+        "spike train"
+      ],
+      "role-organism": [
+        "transformation",
+        "input"
+      ],
+      "role-digital": [
+        "transformation",
+        "evaluation/comparison"
+      ],
+      "evolution": ""
+    },
+    {
+      "id": "recOQAnqIfHnp2r3C",
+      "name": "Caravel",
+      "author": "Ivan Henriques",
+      "img_name": "https://ivanhenriques.com/wp-content/uploads/2016/04/caravel_korneel-e1517413346684.jpg",
+      "doi": "",
+      "year": 2016,
+      "gmo": "",
+      "url": "https://ivanhenriques.com/works/caravel/",
+      "organism": [
+        "bacteria (water)"
+      ],
+      "trigger": [
+        "nutrients"
+      ],
+      "output": [
+        "electrical"
+      ],
+      "scale": [
+        "ecosystem"
+      ],
+      "temporality": [
+        "≤ 1 hour"
+      ],
+      "temporality2": [
+        "progressive"
+      ],
+      "role-organism": [
+        "power"
+      ],
+      "role-digital": [
+        "transformation",
+        "output (connect to humans)"
+      ],
+      "evolution": ""
+    },
+    {
+      "id": "recPqX0TM9HRhxUCh",
+      "name": "Ecobot II\n",
+      "author": "Ioannis Ieropoulos et al.",
+      "img_name": "ecobot.jpg",
+      "doi": "10.5772/5777",
+      "year": 2005,
+      "gmo": "",
+      "url": "https://journals.sagepub.com/doi/10.5772/5777",
+      "organism": [
+        "bacteria (water)"
+      ],
+      "trigger": [
+        "nutrients"
+      ],
+      "output": [
+        "electrical"
+      ],
+      "scale": [
+        "ecosystem"
+      ],
+      "temporality": [
+        "≤ 1 week"
+      ],
+      "temporality2": [
+        "progressive"
+      ],
+      "role-organism": [
+        "power"
+      ],
+      "role-digital": [
+        "transformation"
+      ],
+      "evolution": ""
+    },
+    {
+      "id": "recR49d5vGxC5ysNJ",
+      "name": "BioArtBot",
+      "author": "Counter Culture Labs",
+      "img_name": "https://images.squarespace-cdn.com/content/v1/5f201c898b5f5516ea2b6ec0/1602061761960-T4QAAMWHN16LNSY3T11N/1.+bunny%2C+by+BT.jpg?format=1000w",
+      "doi": "",
+      "year": 2019,
+      "gmo": true,
+      "url": "https://biosummit.live/2020/bio-creation-station/darktemplate-3el6p",
+      "organism": [
+        "bacteria (E. coli) (gmo)"
+      ],
+      "trigger": [
+        "none"
+      ],
+      "output": [
+        "growth"
+      ],
+      "scale": [
+        "population"
+      ],
+      "temporality": [
+        "≤ 1 week"
+      ],
+      "temporality2": [
+        "progressive"
+      ],
+      "role-organism": [
+        "output"
+      ],
+      "role-digital": [
+        "input (activate)"
+      ],
+      "evolution": ""
+    },
+    {
+      "id": "recTp8qiOPv2SXhqA",
+      "name": "CMD",
+      "author": "Micheal Sedbon",
+      "img_name": "CMD.png",
+      "doi": "",
+      "year": 2019,
+      "gmo": "",
+      "url": "https://michaelsedbon.com/CMD",
+      "organism": [
+        "cyanobacteria"
+      ],
+      "trigger": [
+        "light",
+        "nutrients"
+      ],
+      "output": [
+        "gas",
+        "growth"
+      ],
+      "scale": [
+        "population"
+      ],
+      "temporality": [
+        "≤ 1 hour"
+      ],
+      "temporality2": [
+        "progressive"
+      ],
+      "role-organism": [
+        "input",
+        "transformation",
+        "output"
+      ],
+      "role-digital": [
+        "input (activate)",
+        "selection/routing",
+        "evaluation/comparison",
+        "adaptation",
+        "power (maintain life)"
+      ],
+      "evolution": ""
+    },
+    {
+      "id": "recV0HWGyF9fQO2vN",
+      "name": "Precisely Navigated Biobot Swarms of Bacteria Magnetospirillum magneticum for Water Decontamination\n",
+      "author": "Su-Jin Song et al.",
+      "img_name": "https://media.springernature.com/lw685/springer-static/image/art%3A10.1007%2Fs11274-025-04447-y/MediaObjects/11274_2025_4447_Fig7_HTML.png",
+      "doi": "10.1021/acsami.2c16592",
+      "year": 2023,
+      "gmo": "",
+      "url": "https://pubs.acs.org/doi/10.1021/acsami.2c16592",
+      "organism": [
+        "bacteria (Magnetospirillum)"
+      ],
+      "trigger": [
+        "magnetic"
+      ],
+      "output": [
+        "movement"
+      ],
+      "scale": [
+        "organism",
+        "cell"
+      ],
+      "temporality": [
+        "≤ 1 second"
+      ],
+      "temporality2": [
+        "transient"
+      ],
+      "role-organism": [
+        "output",
+        "transformation"
+      ],
+      "role-digital": [
+        "input (activate)"
+      ],
+      "evolution": ""
+    },
+    {
+      "id": "recWBnSUVXIeC11JQ",
+      "name": "Microbial biofilms for electricity generation from water evaporation and power to wearables\n",
+      "author": "Xiaomeng Liu et al.",
+      "img_name": "biofilm.png",
+      "doi": "10.1038/s41467-022-32105-6",
+      "year": 2022,
+      "gmo": true,
+      "url": "https://www.nature.com/articles/s41467-022-32105-6",
+      "organism": [
+        "bacteria (Geobacter sulfurreducens) (gmo)"
+      ],
+      "trigger": [
+        "moisture"
+      ],
+      "output": [
+        "electrical"
+      ],
+      "scale": [
+        "population"
+      ],
+      "temporality": [
+        "≤ 1 hour"
+      ],
+      "temporality2": [
+        "progressive"
+      ],
+      "role-organism": [
+        "power"
+      ],
+      "role-digital": [
+        "none"
+      ],
+      "evolution": ""
+    },
+    {
+      "id": "recWiXEPXUCEKpkfF",
+      "name": "Flea Circus",
+      "author": "Iosif Pinelis et al.",
+      "img_name": "https://www.researchgate.net/profile/Mm-Maharbiz/publication/4240186/figure/fig3/AS:670022120775687@1536757130166/As-the-bacterial-cloud-collapsed-onto-the-pointsource-electrode-the-band-formed_Q320.jpg",
+      "doi": "10.1109/MEMSYS.2006.1627861",
+      "year": 2006,
+      "gmo": "",
+      "url": "https://ieeexplore-ieee-org.tudelft.idm.oclc.org/document/1627861",
+      "organism": [
+        "bacteria (Bacillus subtilis)"
+      ],
+      "trigger": [
+        "oxygen"
+      ],
+      "output": [
+        "movement"
+      ],
+      "scale": [
+        "cell",
+        "organism"
+      ],
+      "temporality": [
+        "≤ 1 minute"
+      ],
+      "temporality2": [
+        "transient"
+      ],
+      "role-organism": [
+        "output"
+      ],
+      "role-digital": [
+        "input (activate)"
+      ],
+      "evolution": ""
+    },
+    {
+      "id": "recWmZMoUG9ekO0mm",
+      "name": "bixels",
+      "author": "Cell-free technology",
+      "img_name": "https://static.designboom.com/wp-content/uploads/2017/11/tetris-bixels-cell-free-designboom818.jpg",
+      "doi": "\n",
+      "year": 2017,
+      "gmo": "",
+      "url": "https://www.helenesteiner.com/project/bixels",
+      "organism": [
+        "DNA"
+      ],
+      "trigger": [
+        "light"
+      ],
+      "output": [
+        "light"
+      ],
+      "scale": [
+        "cell"
+      ],
+      "temporality": [
+        "unknown"
+      ],
+      "temporality2": [],
+      "role-organism": [
+        "output",
+        "transformation"
+      ],
+      "role-digital": [
+        "input (activate)"
+      ],
+      "evolution": ""
+    },
+    {
+      "id": "recXEDZZ9ypAQZYDF",
+      "name": "Urban Algae Canopy\n",
+      "author": "ecoLogicStudio",
+      "img_name": "Urban-Algae-Canopy.jpg",
+      "doi": "",
+      "year": 2015,
+      "gmo": "",
+      "url": "https://www.ecologicstudio.com/projects/expo-milano-2015-urban-algae-folly",
+      "organism": [
+        "microalgae (Spirulina)"
+      ],
+      "trigger": [
+        "light"
+      ],
+      "output": [
+        "growth"
+      ],
+      "scale": [
+        "population"
+      ],
+      "temporality": [
+        "≤ 1 week"
+      ],
+      "temporality2": [
+        "progressive"
+      ],
+      "role-organism": [
+        "output",
+        "transformation"
+      ],
+      "role-digital": [
+        "input (activate)"
+      ],
+      "evolution": ""
+    },
+    {
+      "id": "recY796gz32Z37pfQ",
+      "name": "Rafigh",
+      "author": "Foad Hamidi and Melanie Baljko",
+      "img_name": "rafigh.png",
+      "doi": "10.1145/2556288.2557402",
+      "year": 2014,
+      "gmo": "",
+      "url": "https://dl.acm.org/doi/10.1145/2556288.2557402",
+      "organism": [
+        "fungi (oyster mushrooms)"
+      ],
+      "trigger": [
+        "nutrients"
+      ],
+      "output": [
+        "growth"
+      ],
+      "scale": [
+        "organism"
+      ],
+      "temporality": [
+        "> 1 week"
+      ],
+      "temporality2": [
+        "progressive"
+      ],
+      "role-organism": [
+        "output",
+        "transformation"
+      ],
+      "role-digital": [
+        "power (maintain life)"
+      ],
+      "evolution": ""
+    },
+    {
+      "id": "recZIWTnbWyvhGf16",
+      "name": "Reactive fungal wearable",
+      "author": "Andrew Adamatzky et al.",
+      "img_name": "https://ars.els-cdn.com/content/image/1-s2.0-S0303264720301805-gr1.jpg",
+      "doi": "10.1016/j.biosystems.2020.104304",
+      "year": 2021,
+      "gmo": "",
+      "url": "https://doi.org/10.1016/j.biosystems.2020.104304",
+      "organism": [
+        "fungi (oyster mushrooms)"
+      ],
+      "trigger": [
+        "chemical",
+        "mechanical"
+      ],
+      "output": [
+        "electrical"
+      ],
+      "scale": [
+        "organism"
+      ],
+      "temporality": [
+        "≤ 1 minute"
+      ],
+      "temporality2": [
+        "spike train",
+        "transient"
+      ],
+      "role-organism": [
+        "input",
+        "transformation"
+      ],
+      "role-digital": [
+        "evaluation/comparison",
+        "output (connect to humans)"
+      ],
+      "evolution": ""
+    },
+    {
+      "id": "recadaXs6KwmmocaT",
+      "name": "Bio-Digital Calendar",
+      "author": "Fiona Bell et al.",
+      "img_name": "https://www.colorado.edu/atlas/sites/default/files/styles/medium_750px_50_display_size_/public/article-image/bio-digital_calendar_1.png?itok=FiVVel-0",
+      "doi": "10.1145/3623509.3633386",
+      "year": 2024,
+      "gmo": "",
+      "url": "https://dl.acm.org/doi/10.1145/3623509.3633386",
+      "organism": [
+        "Kombucha SCOBY"
+      ],
+      "trigger": [
+        "none"
+      ],
+      "output": [
+        "growth"
+      ],
+      "scale": [
+        "ecosystem"
+      ],
+      "temporality": [
+        "≤ 1 week"
+      ],
+      "temporality2": [
+        "progressive"
+      ],
+      "role-organism": [
+        "input"
+      ],
+      "role-digital": [
+        "transformation",
+        "output (connect to humans)"
+      ],
+      "evolution": ""
+    },
+    {
+      "id": "recc1CWvB6LAS2CUN",
+      "name": "Stress-o-stat\r",
+      "author": "Howard Boland",
+      "img_name": "stress-o-stat.jpg",
+      "doi": "",
+      "year": 2011,
+      "gmo": true,
+      "url": "https://www.c-lab.co.uk/projects/stress_o_stat",
+      "organism": [
+        "bacteria (E. coli) (gmo)"
+      ],
+      "trigger": [
+        "oxidative stress",
+        "nutrients",
+        "light"
+      ],
+      "output": [
+        "light"
+      ],
+      "scale": [
+        "population"
+      ],
+      "temporality": [
+        "unknown"
+      ],
+      "temporality2": [],
+      "role-organism": [
+        "output"
+      ],
+      "role-digital": [
+        "power (maintain life)",
+        "input (activate)",
+        "transformation"
+      ],
+      "evolution": ""
+    },
+    {
+      "id": "reccnrdpLg7VtmzMz",
+      "name": "Living Things",
+      "author": "Jacob Douenias, Ethan Frier, and Lena Tesone",
+      "img_name": "https://images.squarespace-cdn.com/content/v1/556729cfe4b02e6e6bce5651/1441909309992-YJ25GA2V310NSA46NDSK/MF_Jacob-Ethan_LivingThings-7920.jpg",
+      "doi": "",
+      "year": 2020,
+      "gmo": "",
+      "url": "http://www.livingthings.us/",
+      "organism": [
+        "microalgae (Spirulina)"
+      ],
+      "trigger": [
+        "none"
+      ],
+      "output": [
+        "growth"
+      ],
+      "scale": [
+        "population"
+      ],
+      "temporality": [
+        "unknown"
+      ],
+      "temporality2": [
+        "progressive"
+      ],
+      "role-organism": [
+        "transformation",
+        "output"
+      ],
+      "role-digital": [
+        "power (maintain life)",
+        "input (activate)"
+      ],
+      "evolution": ""
+    },
+    {
+      "id": "reccuAQNW9l03QfbF",
+      "name": "Microbial home",
+      "author": "Philips Design",
+      "img_name": "microbial_home.jpg",
+      "doi": "",
+      "year": 2011,
+      "gmo": "",
+      "url": "https://www.dezeen.com/2011/10/29/microbial-home-by-philips-design/",
+      "organism": [
+        "bacteria (water)"
+      ],
+      "trigger": [
+        "nutrients"
+      ],
+      "output": [
+        "electrical"
+      ],
+      "scale": [
+        "ecosystem"
+      ],
+      "temporality": [
+        "≤ 1 hour"
+      ],
+      "temporality2": [
+        "progressive"
+      ],
+      "role-organism": [
+        "power"
+      ],
+      "role-digital": [
+        "none"
+      ],
+      "evolution": ""
+    },
+    {
+      "id": "recdVhA93d4PA1YPW",
+      "name": "Beauty: Explorations of Machine-Microbial Agencies\n",
+      "author": "Johnny DiBlasi et al.",
+      "img_name": "beauty.jpg",
+      "doi": "10.1145/3597626",
+      "year": 2023,
+      "gmo": "",
+      "url": "https://dl.acm.org/doi/abs/10.1145/3597626",
+      "organism": [
+        "bacteria (Bacillus subtilis)",
+        "bacteria (Paenibacillus dendritiformis)",
+        "bacteria (Bacillus mycoides)"
+      ],
+      "trigger": [
+        "nutrients"
+      ],
+      "output": [
+        "growth"
+      ],
+      "scale": [
+        "population"
+      ],
+      "temporality": [
+        "≤ 1 day"
+      ],
+      "temporality2": [
+        "transient",
+        "progressive"
+      ],
+      "role-organism": [
+        "input",
+        "output",
+        "transformation",
+        "adaptation"
+      ],
+      "role-digital": [
+        "power (maintain life)",
+        "evaluation/comparison",
+        "input (activate)",
+        "adaptation"
+      ],
+      "evolution": ""
+    },
+    {
+      "id": "receEk4Nsh8uVGVmB",
+      "name": "Cryptographic Beings\r",
+      "author": "Micheal Sedbon",
+      "img_name": "https://freight.cargo.site/w/1750/i/110ee6337084ec3ec011aef5a996afc6d13cef872d6efb81d065be9030377669/RK_00209.jpg",
+      "doi": "",
+      "year": 2022,
+      "gmo": "",
+      "url": "https://michaelsedbon.com/Cryptographic-Beings",
+      "organism": [
+        "algae (Aegagropila linnaei)"
+      ],
+      "trigger": [
+        "light"
+      ],
+      "output": [
+        "gas",
+        "movement"
+      ],
+      "scale": [
+        "organism",
+        "population"
+      ],
+      "temporality": [
+        "≤ 1 hour"
+      ],
+      "temporality2": [
+        "transient"
+      ],
+      "role-organism": [
+        "memory/state",
+        "evaluation/comparison"
+      ],
+      "role-digital": [
+        "input (activate)"
+      ],
+      "evolution": ""
+    },
+    {
+      "id": "recedWtMJxpaRwTLk",
+      "name": "Microbial Sonorities ",
+      "author": "Carlos Castellanos",
+      "img_name": "https://www.ccastellanos.com/wp-content/gallery/microbial-sonorities/d.jpg",
+      "doi": "",
+      "year": 2017,
+      "gmo": "",
+      "url": "https://www.ccastellanos.com/projects/microbial-sonorities/",
+      "organism": [
+        "bacteria (water)"
+      ],
+      "trigger": [
+        "none"
+      ],
+      "output": [
+        "electrical"
+      ],
+      "scale": [
+        "ecosystem"
+      ],
+      "temporality": [
+        "≤ 1 second"
+      ],
+      "temporality2": [],
+      "role-organism": [
+        "input",
+        "transformation"
+      ],
+      "role-digital": [
+        "evaluation/comparison",
+        "output (connect to humans)"
+      ],
+      "evolution": ""
+    },
+    {
+      "id": "recegqeiLyCXiuwY2",
+      "name": "Algae Alight\r",
+      "author": "Zoë Breed et al.",
+      "img_name": "algae_alight.png",
+      "doi": "10.1145/3643834.3660728",
+      "year": 2024,
+      "gmo": "",
+      "url": "https://dl.acm.org/doi/10.1145/3643834.3660728",
+      "organism": [
+        "protozoa (Dinoflagellates)"
+      ],
+      "trigger": [
+        "mechanical"
+      ],
+      "output": [
+        "light"
+      ],
+      "scale": [
+        "population"
+      ],
+      "temporality": [
+        "≤ 1 second"
+      ],
+      "temporality2": [],
+      "role-organism": [
+        "output",
+        "transformation"
+      ],
+      "role-digital": [
+        "input (activate)"
+      ],
+      "evolution": ""
+    },
+    {
+      "id": "recfApVchlGgXd6TI",
+      "name": "Slimo City",
+      "author": "Mengyao Guo et al.",
+      "img_name": "slimo_city.png",
+      "doi": "10.1145/3708557.3716346",
+      "year": 2025,
+      "gmo": "",
+      "url": "https://dl.acm.org/doi/10.1145/3708557.3716346",
+      "organism": [
+        "slime mould (Physarum polycephalum)"
+      ],
+      "trigger": [
+        "nutrients"
+      ],
+      "output": [
+        "growth"
+      ],
+      "scale": [
+        "cell",
+        "organism"
+      ],
+      "temporality": [
+        "≤ 1 hour"
+      ],
+      "temporality2": [
+        "progressive"
+      ],
+      "role-organism": [
+        "input"
+      ],
+      "role-digital": [
+        "transformation",
+        "evaluation/comparison",
+        "output (connect to humans)"
+      ],
+      "evolution": ""
+    },
+    {
+      "id": "recgEbP8gefkWBhnf",
+      "name": "Magnetotactic Microrobot",
+      "author": "Walder André et al.",
+      "img_name": "MTB_microrobot.png",
+      "doi": "10.1109/AIM.2007.4412427",
+      "year": 2006,
+      "gmo": "",
+      "url": "https://ieeexplore-ieee-org.tudelft.idm.oclc.org/document/4412427",
+      "organism": [
+        "bacteria (Magnetospirillum)"
+      ],
+      "trigger": [
+        "magnetic"
+      ],
+      "output": [
+        "movement"
+      ],
+      "scale": [
+        "cell",
+        "organism"
+      ],
+      "temporality": [
+        "≤ 1 second"
+      ],
+      "temporality2": [
+        "transient"
+      ],
+      "role-organism": [
+        "input",
+        "output",
+        "transformation"
+      ],
+      "role-digital": [
+        "input (activate)",
+        "selection/routing"
+      ],
+      "evolution": ""
+    },
+    {
+      "id": "rechoYrj8jzzWMjEC",
+      "name": "Let the Microbes Power your Sensing Display",
+      "author": "Maurizio Rossi et al.",
+      "img_name": "sensing_display.png",
+      "doi": "10.1109/ICSENS.2017.8234406",
+      "year": 2017,
+      "gmo": "",
+      "url": "https://ieeexplore-ieee-org.tudelft.idm.oclc.org/document/8234406",
+      "organism": [
+        "bacteria (exoelectrogens)"
+      ],
+      "trigger": [
+        "nutrients"
+      ],
+      "output": [
+        "electrical"
+      ],
+      "scale": [
+        "population"
+      ],
+      "temporality": [
+        "≤ 1 hour"
+      ],
+      "temporality2": [
+        "progressive"
+      ],
+      "role-organism": [
+        "power"
+      ],
+      "role-digital": [
+        "transformation",
+        "output (connect to humans)"
+      ],
+      "evolution": ""
+    },
+    {
+      "id": "rechwXpM9DlC4TFze",
+      "name": "Living Mirror",
+      "author": "C-lab",
+      "img_name": "https://www.getty.edu/publications/living-matter/img/figures/fig-6-8-hauser.jpg",
+      "doi": "",
+      "year": 2013,
+      "gmo": "",
+      "url": "https://www.c-lab.co.uk/projects/livingmirror",
+      "organism": [
+        "bacteria (Magnetospirillum)"
+      ],
+      "trigger": [
+        "magnetic"
+      ],
+      "output": [
+        "optical effect"
+      ],
+      "scale": [
+        "population"
+      ],
+      "temporality": [
+        "≤ 1 second"
+      ],
+      "temporality2": [],
+      "role-organism": [
+        "transformation",
+        "output"
+      ],
+      "role-digital": [
+        "input (activate)",
+        "selection/routing"
+      ],
+      "evolution": ""
+    },
+    {
+      "id": "rechyhHchkcymi27N",
+      "name": "Mould rush",
+      "author": "Raphael Kim et al.",
+      "img_name": "https://www.researchgate.net/publication/332096112/figure/fig1/AS:755533665558528@1557144671037/Scene-from-a-typical-Mould-Rush-game-version-2-Note-image-of-microbes-growing-in.png",
+      "doi": "10.1145/3235765.3235798",
+      "year": 2018,
+      "gmo": "",
+      "url": "https://dl.acm.org/doi/10.1145/3235765.3235798",
+      "organism": [
+        "bacteria (unspecified)",
+        "yeast",
+        "mold"
+      ],
+      "trigger": [
+        "chemical",
+        "none"
+      ],
+      "output": [
+        "growth",
+        "death"
+      ],
+      "scale": [
+        "population",
+        "ecosystem"
+      ],
+      "temporality": [
+        "≤ 1 day"
+      ],
+      "temporality2": [],
+      "role-organism": [
+        "output"
+      ],
+      "role-digital": [
+        "output (connect to humans)",
+        "input (activate)",
+        "transformation"
+      ],
+      "evolution": ""
+    },
+    {
+      "id": "recifFOpni5WRV1Ch",
+      "name": "LudusScope: Accessible Interactive Smartphone Microscopy for Life-Science Education",
+      "author": "Honesty Kim et al.",
+      "img_name": "https://www.researchgate.net/publication/345857316/figure/fig1/AS:957784656990209@1605365065168/Screenshot-from-Euglena-Soccer-Game-Kim-et-al-2016.png",
+      "doi": "10.1371/journal.pone.0162602",
+      "year": 2016,
+      "gmo": "",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC5051900/",
+      "organism": [
+        "protozoa (Euglena)"
+      ],
+      "trigger": [
+        "light"
+      ],
+      "output": [
+        "movement"
+      ],
+      "scale": [
+        "organism",
+        "cell"
+      ],
+      "temporality": [
+        "≤ 1 second"
+      ],
+      "temporality2": [
+        "transient"
+      ],
+      "role-organism": [
+        "transformation"
+      ],
+      "role-digital": [
+        "output (connect to humans)",
+        "input (activate)"
+      ],
+      "evolution": ""
+    },
+    {
+      "id": "reckvemMQ65ulW0tM",
+      "name": "EuglPollock",
+      "author": "Kyungwon Lee et al.",
+      "img_name": "https://dl.acm.org/cms/asset/f80029e8-1d66-48bc-96d0-f18f4517f0c3/3503161.3548151.key.jpg",
+      "doi": "10.1145/3503161.3548151",
+      "year": 2022,
+      "gmo": "",
+      "url": "https://dl.acm.org/doi/10.1145/3503161.3548151",
+      "organism": [
+        "protozoa (Euglena)"
+      ],
+      "trigger": [
+        "light"
+      ],
+      "output": [
+        "movement"
+      ],
+      "scale": [
+        "organism",
+        "cell"
+      ],
+      "temporality": [
+        "≤ 1 second"
+      ],
+      "temporality2": [
+        "transient"
+      ],
+      "role-organism": [
+        "transformation"
+      ],
+      "role-digital": [
+        "input (activate)",
+        "output (connect to humans)"
+      ],
+      "evolution": ""
+    },
+    {
+      "id": "reclsOBg7Jyd3wAB8",
+      "name": "Where Species Meet (Zones de contact)",
+      "author": "Günes-Hélène Isitan",
+      "img_name": "Where_Species_Meet.png",
+      "doi": "",
+      "year": 2016,
+      "gmo": "",
+      "url": "https://www.gunesisitan.com/where-species-meet",
+      "organism": [
+        "paramecia"
+      ],
+      "trigger": [
+        "electrical"
+      ],
+      "output": [
+        "movement"
+      ],
+      "scale": [
+        "cell",
+        "organism"
+      ],
+      "temporality": [
+        "≤ 1 second"
+      ],
+      "temporality2": [
+        "transient"
+      ],
+      "role-organism": [
+        "transformation"
+      ],
+      "role-digital": [
+        "input (activate)"
+      ],
+      "evolution": ""
+    },
+    {
+      "id": "recmPqFlTaw0JwPBC",
+      "name": "Mining logical circuits in fungi\n",
+      "author": "Nic Roberts and Andrew Adamatzky",
+      "img_name": "mining.png",
+      "doi": "10.1038/s41598-022-20080-3",
+      "year": 2022,
+      "gmo": "",
+      "url": "https://www.nature.com/articles/s41598-022-20080-3",
+      "organism": [
+        "fungi (oyster mushrooms)"
+      ],
+      "trigger": [
+        "electrical"
+      ],
+      "output": [
+        "electrical"
+      ],
+      "scale": [
+        "organism"
+      ],
+      "temporality": [
+        "≤ 1 hour"
+      ],
+      "temporality2": [
+        "transient",
+        "spike train"
+      ],
+      "role-organism": [
+        "transformation",
+        "evaluation/comparison"
+      ],
+      "role-digital": [
+        "none"
+      ],
+      "evolution": ""
+    },
+    {
+      "id": "recmyUVnvCPrlalBF",
+      "name": "Living Screens",
+      "author": "Catalina Puello, Fabio Rivera, Johana Monroy",
+      "img_name": "https://www.iaacblog.com/wp-content/uploads/2017/06/final-presentation_0646.jpg",
+      "doi": "",
+      "year": 2017,
+      "gmo": "",
+      "url": "https://www.iaacblog.com/projects/living-screens-2/",
+      "organism": [
+        "slime mould (Physarum polycephalum)"
+      ],
+      "trigger": [
+        "nutrients"
+      ],
+      "output": [
+        "growth"
+      ],
+      "scale": [
+        "cell",
+        "organism"
+      ],
+      "temporality": [
+        "≤ 1 hour"
+      ],
+      "temporality2": [],
+      "role-organism": [
+        "output"
+      ],
+      "role-digital": [
+        "input (activate)",
+        "power (maintain life)"
+      ],
+      "evolution": ""
+    },
+    {
+      "id": "reco1Shmh3Zr18AiF",
+      "name": "BioGraphr",
+      "author": "Lukas C Gerber et al.",
+      "img_name": "https://www.researchgate.net/profile/Lukas-Gerber-3/publication/312491700/figure/fig1/AS:451685236645888@1484701560905/The-BioGraphr-uses-millions-of-living-organisms-Euglena-in-its-core-These-cells-form.png",
+      "doi": "",
+      "year": 2016,
+      "gmo": "",
+      "url": "https://experts.arizona.edu/en/publications/biographr-science-games-on-a-biotic-computer",
+      "organism": [
+        "protozoa (Euglena)"
+      ],
+      "trigger": [
+        "light"
+      ],
+      "output": [
+        "movement"
+      ],
+      "scale": [
+        "organism",
+        "cell"
+      ],
+      "temporality": [
+        "≤ 1 second"
+      ],
+      "temporality2": [],
+      "role-organism": [
+        "output",
+        "transformation"
+      ],
+      "role-digital": [
+        "output (connect to humans)",
+        "input (activate)"
+      ],
+      "evolution": ""
+    },
+    {
+      "id": "reco57OpCOXuO5KNm",
+      "name": "POND",
+      "author": "Nova Innova",
+      "img_name": "https://www.novainnova.com/wp-content/uploads/2024/10/POND-tech-V4-1876x2048.png",
+      "doi": "",
+      "year": 2020,
+      "gmo": "",
+      "url": "https://www.novainnova.com/pond/",
+      "organism": [
+        "bacteria (water)"
+      ],
+      "trigger": [
+        "nutrients"
+      ],
+      "output": [
+        "electrical"
+      ],
+      "scale": [
+        "ecosystem"
+      ],
+      "temporality": [
+        "≤ 1 hour"
+      ],
+      "temporality2": [],
+      "role-organism": [
+        "power"
+      ],
+      "role-digital": [
+        "transformation",
+        "output (connect to humans)"
+      ],
+      "evolution": ""
+    },
+    {
+      "id": "recschbz8pUUvdrgh",
+      "name": "Micro-Rhythms",
+      "author": "Interspecifics",
+      "img_name": "https://farm6.staticflickr.com/5520/30541618515_d2b6f89fd2_k_d.jpg",
+      "doi": "",
+      "year": 2016,
+      "gmo": "",
+      "url": "https://interspecifics.cc/work/micro-ritmos-2016/",
+      "organism": [
+        "bacteria (unspecified)"
+      ],
+      "trigger": [
+        "none"
+      ],
+      "output": [
+        "electrical"
+      ],
+      "scale": [
+        "population",
+        "ecosystem"
+      ],
+      "temporality": [
+        "≤ 1 second"
+      ],
+      "temporality2": [
+        "transient"
+      ],
+      "role-organism": [
+        "input"
+      ],
+      "role-digital": [
+        "transformation",
+        "evaluation/comparison",
+        "adaptation",
+        "output (connect to humans)"
+      ],
+      "evolution": ""
+    },
+    {
+      "id": "rectgiGBWDzbdsNZo",
+      "name": "Long range wireless sensing\npowered by plant-microbial fuel cell",
+      "author": "Maurizio Rossi et al.",
+      "img_name": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRO0Wxvm4QU0B-fkBeOgnV5jbOSTQw95wE7vQ&s",
+      "doi": "10.23919/DATE.2017.7927258",
+      "year": 2017,
+      "gmo": "",
+      "url": "https://ieeexplore-ieee-org.tudelft.idm.oclc.org/document/7927258",
+      "organism": [
+        "bacteria (exoelectrogens)"
+      ],
+      "trigger": [
+        "nutrients"
+      ],
+      "output": [
+        "electrical"
+      ],
+      "scale": [
+        "population"
+      ],
+      "temporality": [
+        "≤ 1 hour"
+      ],
+      "temporality2": [
+        "progressive"
+      ],
+      "role-organism": [
+        "power"
+      ],
+      "role-digital": [
+        "transformation",
+        "output (connect to humans)"
+      ],
+      "evolution": ""
+    },
+    {
+      "id": "recuuceNw6QJS7upf",
+      "name": "Symbiotic Machine",
+      "author": "Ivan Henriques",
+      "img_name": "https://ivanhenriques.com/wp-content/uploads/2014/03/dsc07923.jpg",
+      "doi": "",
+      "year": 2014,
+      "gmo": "",
+      "url": "https://ivanhenriques.com/works/symbiotic-machine/",
+      "organism": [
+        "algae (Spirogyra)"
+      ],
+      "trigger": [
+        "mechanical",
+        "light"
+      ],
+      "output": [
+        "electrical"
+      ],
+      "scale": [
+        "population"
+      ],
+      "temporality": [
+        "≤ 1 hour"
+      ],
+      "temporality2": [],
+      "role-organism": [
+        "power"
+      ],
+      "role-digital": [
+        "input (activate)",
+        "transformation"
+      ],
+      "evolution": ""
+    },
+    {
+      "id": "recvWfYT2H7fNxQWE",
+      "name": "Ctrl\r",
+      "author": "Micheal Sedbon",
+      "img_name": "https://freight.cargo.site/w/1750/i/3b7019382eacda4b9e64a90d9ae3c58b3d7c7ede2de3270b747d5073323c9b27/IMG_0164_o.jpg",
+      "doi": "",
+      "year": 2022,
+      "gmo": "",
+      "url": "https://michaelsedbon.com/C-t-r-l",
+      "organism": [
+        "slime mould (Physarum polycephalum)"
+      ],
+      "trigger": [
+        "light"
+      ],
+      "output": [
+        "growth"
+      ],
+      "scale": [
+        "cell",
+        "organism"
+      ],
+      "temporality": [
+        "≤ 1 hour"
+      ],
+      "temporality2": [],
+      "role-organism": [
+        "input"
+      ],
+      "role-digital": [
+        "evaluation/comparison",
+        "selection/routing",
+        "transformation"
+      ],
+      "evolution": ""
+    },
+    {
+      "id": "recw85uSK7QIsFlDE",
+      "name": "Biohybrid microswimmer",
+      "author": "Mukrime Birgul Akolpoglu et al.",
+      "img_name": "https://www.cell.com/cms/10.1016/j.matt.2025.102052/asset/52030a26-3f3e-46a7-b557-7b8ef4ce3ff0/main.assets/fx1.jpg",
+      "doi": "\t10.1016/j.matt.2025.102052",
+      "year": 2025,
+      "gmo": true,
+      "url": "https://www.cell.com/matter/fulltext/S2590-2385(25)00095-5",
+      "organism": [
+        "microalgae (Chlamydomonas reinhardtii) (gmo)"
+      ],
+      "trigger": [
+        "magnetic"
+      ],
+      "output": [
+        "movement"
+      ],
+      "scale": [
+        "organism",
+        "cell"
+      ],
+      "temporality": [
+        "≤ 1 second"
+      ],
+      "temporality2": [
+        "transient"
+      ],
+      "role-organism": [
+        "output"
+      ],
+      "role-digital": [
+        "input (activate)",
+        "selection/routing"
+      ],
+      "evolution": ""
+    },
+    {
+      "id": "recx5dsoLe9OG5NBH",
+      "name": "Bacterbrain",
+      "author": "Ivan Henriques",
+      "img_name": "https://ivanhenriques.com/wp-content/uploads/2019/05/IMG_3415.jpg",
+      "doi": "",
+      "year": 2019,
+      "gmo": "",
+      "url": "https://ivanhenriques.com/works/bacterbrain/",
+      "organism": [
+        "bacteria (unspecified)"
+      ],
+      "trigger": [
+        "nutrients"
+      ],
+      "output": [
+        "electrical"
+      ],
+      "scale": [
+        "population"
+      ],
+      "temporality": [
+        "≤ 1 hour"
+      ],
+      "temporality2": [
+        "progressive"
+      ],
+      "role-organism": [
+        "power"
+      ],
+      "role-digital": [
+        "transformation",
+        "output (connect to humans)"
+      ],
+      "evolution": ""
+    },
+    {
+      "id": "recxHQrhf7QESjM87",
+      "name": "Mold Printer",
+      "author": "Valentin Postl et al.",
+      "img_name": "mold_printer.png",
+      "doi": "10.1145/3623509.3633396",
+      "year": 2024,
+      "gmo": "",
+      "url": "https://dl.acm.org/doi/10.1145/3623509.3633396",
+      "organism": [
+        "mold"
+      ],
+      "trigger": [
+        "none"
+      ],
+      "output": [
+        "growth"
+      ],
+      "scale": [
+        "population"
+      ],
+      "temporality": [
+        "≤ 1 day"
+      ],
+      "temporality2": [
+        "persistent"
+      ],
+      "role-organism": [
+        "transformation",
+        "output"
+      ],
+      "role-digital": [
+        "input (activate)"
+      ],
+      "evolution": ""
+    },
+    {
+      "id": "recxItfenPfbsMNYK",
+      "name": "Bacterial Networked Electronic Interface",
+      "author": "Paris Bettencour",
+      "img_name": "bacteria_interface.png",
+      "doi": "",
+      "year": 2022,
+      "gmo": true,
+      "url": "https://2022.igem.wiki/paris-bettencourt/index.html",
+      "organism": [
+        "bacteria (E. coli) (gmo)"
+      ],
+      "trigger": [
+        "chemical",
+        "electrical"
+      ],
+      "output": [
+        "electrical"
+      ],
+      "scale": [
+        "subcellular",
+        "population"
+      ],
+      "temporality": [
+        "≤ 1 hour"
+      ],
+      "temporality2": [],
+      "role-organism": [
+        "transformation",
+        "selection/routing",
+        "output"
+      ],
+      "role-digital": [
+        "input (activate)",
+        "transformation"
+      ],
+      "evolution": ""
+    },
+    {
+      "id": "recxuwRFnXTris589",
+      "name": "Tangible Interactive Microbiology for Informal Science Education\n",
+      "author": "Seung Ah Lee",
+      "img_name": "https://dl.acm.org/cms/asset/2442beb4-fa94-4473-b4ab-1f1078831d6a/2677199.2680561.key.jpg",
+      "doi": "10.1145/2677199.2680561",
+      "year": 2015,
+      "gmo": "",
+      "url": "https://dl.acm.org/doi/10.1145/2677199.2680561",
+      "organism": [
+        "protozoa (Euglena)"
+      ],
+      "trigger": [
+        "light"
+      ],
+      "output": [
+        "movement"
+      ],
+      "scale": [
+        "organism",
+        "cell"
+      ],
+      "temporality": [
+        "≤ 1 second"
+      ],
+      "temporality2": [
+        "transient"
+      ],
+      "role-organism": [
+        "transformation"
+      ],
+      "role-digital": [
+        "input (activate)",
+        "output (connect to humans)"
+      ],
+      "evolution": ""
+    },
+    {
+      "id": "recy1t6kzGuRQGlom",
+      "name": "Algae relay\r",
+      "author": "Yuta Ikeya and Bahareh Barati",
+      "img_name": "algae_relay.jpg",
+      "doi": "10.1145/3544549.3585874",
+      "year": 2023,
+      "gmo": "",
+      "url": "https://dl.acm.org/doi/10.1145/3544549.3585874",
+      "organism": [
+        "microalgae (Spirulina)"
+      ],
+      "trigger": [
+        "light"
+      ],
+      "output": [
+        "growth"
+      ],
+      "scale": [
+        "population"
+      ],
+      "temporality": [
+        "≤ 1 day"
+      ],
+      "temporality2": [
+        "progressive"
+      ],
+      "role-organism": [
+        "selection/routing"
+      ],
+      "role-digital": [
+        "evaluation/comparison"
+      ],
+      "evolution": ""
+    },
+    {
+      "id": "recy8R7e2n7Clluel",
+      "name": "Light-deformable microrobots shape up for the biological obstacle course\r",
+      "author": "Philip Wijesinghe",
+      "img_name": "https://media.springernature.com/m685/springer-static/image/art%3A10.1038%2Fs41377-024-01448-8/MediaObjects/41377_2024_1448_Fig1_HTML.png",
+      "doi": "10.1038/s41377-024-01448-8",
+      "year": 2024,
+      "gmo": "",
+      "url": "https://www.nature.com/articles/s41377-024-01448-8",
+      "organism": [
+        "protozoa (Euglena)"
+      ],
+      "trigger": [
+        "light"
+      ],
+      "output": [
+        "movement"
+      ],
+      "scale": [
+        "organism",
+        "cell"
+      ],
+      "temporality": [
+        "≤ 1 second"
+      ],
+      "temporality2": [
+        "transient"
+      ],
+      "role-organism": [
+        "transformation"
+      ],
+      "role-digital": [
+        "input (activate)",
+        "transformation"
+      ],
+      "evolution": ""
+    },
+    {
+      "id": "recyVYWueHEVJpzGN",
+      "name": "BioSoNot",
+      "author": "Gilberto Esparza",
+      "img_name": "https://samim.io/static/upload/0biosonot-12.jpg",
+      "doi": "10.1145/3072940.3080500",
+      "year": 2017,
+      "gmo": "",
+      "url": "https://dl.acm.org/doi/10.1145/3072940.3080500",
+      "organism": [
+        "bacteria (water)"
+      ],
+      "trigger": [
+        "none"
+      ],
+      "output": [
+        "electrical"
+      ],
+      "scale": [
+        "ecosystem"
+      ],
+      "temporality": [
+        "≤ 1 hour"
+      ],
+      "temporality2": [],
+      "role-organism": [
+        "input"
+      ],
+      "role-digital": [
+        "output (connect to humans)",
+        "transformation"
+      ],
+      "evolution": ""
+    }
+  ],
+  "visibleColumns": [
+    "organism",
+    "trigger",
+    "output",
+    "scale",
+    "temporality",
+    "temporality2",
+    "role-organism",
+    "role-digital"
+  ],
+  "timestamp": "2025-08-23T08:00:38.766Z"
+}
