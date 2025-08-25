@@ -88,6 +88,13 @@ const BioDigitalSankeyApp = () => {
     return `M${x0},${y0}C${x2},${y0} ${x3},${y1} ${x1},${y1}`;
   };
 
+  const calculateNodeHeight = (nodeValue, maxValue) => {
+    const minHeight = 5;   // Minimum height for visibility
+    const maxHeight = 50;  // Maximum height for largest nodes
+    if (maxValue === 0) return minHeight;
+    return minHeight + (nodeValue / maxValue) * (maxHeight - minHeight);
+  };
+
   // Unified Highlighting Functions
   const applyFrozenHighlighting = useCallback((targetSystems, clickedElement = null, isLink = false) => {
     const allLinks = d3.selectAll('.link');
@@ -882,20 +889,45 @@ const BioDigitalSankeyApp = () => {
     const availableWidth = width - margin.left - margin.right;
     const columnWidth = availableWidth / Math.max(1, visibleColumns.length - 1);
     
+    // Calculate max value for height scaling
+    const maxNodeValue = Math.max(...graph.nodes.map(n => n.value));
+
     // Position nodes
     visibleColumns.forEach((column, columnIndex) => {
       const nodesInColumn = graph.nodes.filter(n => n.category === column);
       const totalHeight = height - margin.top - margin.bottom;
-      const nodeHeight = 20;
+      const minNodeSpacing = 3; // Minimum spacing between nodes
+      
+      // Calculate total height needed for all nodes in this column
+      let totalNodeHeight = 0;
+      nodesInColumn.forEach(node => {
+        node.height = calculateNodeHeight(node.value, maxNodeValue);
+        totalNodeHeight += node.height;
+      });
+      
+      // Calculate spacing
       const numNodes = nodesInColumn.length;
-      const totalNodeSpace = numNodes * nodeHeight;
-      const nodePadding = numNodes > 1 ? (totalHeight - totalNodeSpace) / (numNodes - 1) : 0;
-
+      const totalSpacingNeeded = minNodeSpacing * (numNodes - 1);
+      const availableSpacing = totalHeight - totalNodeHeight - totalSpacingNeeded;
+      
+      // If nodes don't fit, scale them down
+      if (availableSpacing < 0) {
+        const scaleFactor = (totalHeight - totalSpacingNeeded) / totalNodeHeight;
+        nodesInColumn.forEach(node => {
+          node.height = node.height * scaleFactor;
+        });
+        totalNodeHeight = totalHeight - totalSpacingNeeded;
+      }
+      
+      // Position nodes with consistent spacing
+      let currentY = margin.top;
+      const extraSpacing = Math.max(0, availableSpacing) / numNodes;
+      
       nodesInColumn.forEach((node, nodeIndex) => {
         node.x = margin.left + (visibleColumns.length === 1 ? 0 : columnIndex * columnWidth);
-        node.y = margin.top + nodeIndex * (nodeHeight + nodePadding);
-        node.height = nodeHeight;
+        node.y = currentY + extraSpacing / 2;
         node.width = nodeWidth;
+        currentY += node.height + minNodeSpacing + extraSpacing;
       });
     });
 
