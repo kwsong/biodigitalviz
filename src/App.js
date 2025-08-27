@@ -62,6 +62,7 @@ const BioDigitalSankeyApp = () => {
   const clickTimeout = useRef(null);
   const zoomTransformRef = useRef(d3.zoomIdentity);
   const buttonsDisabledRef = useRef(false);
+  const globalMaxSystemCount = useRef(0);
 
   // Helper Functions
   const normalizeToArray = useCallback((fieldValue) => {
@@ -88,11 +89,18 @@ const BioDigitalSankeyApp = () => {
     return `M${x0},${y0}C${x2},${y0} ${x3},${y1} ${x1},${y1}`;
   };
 
-  const calculateNodeHeight = (nodeValue, maxValue) => {
+  // Updated height calculation function - now uses absolute system counts
+  const calculateNodeHeight = (systemCount, globalMaxCount) => {
     const minHeight = 5;   // Minimum height for visibility
     const maxHeight = 50;  // Maximum height for largest nodes
-    if (maxValue === 0) return minHeight;
-    return minHeight + (nodeValue / maxValue) * (maxHeight - minHeight);
+    if (globalMaxCount === 0) return minHeight;
+    return minHeight + (systemCount / globalMaxCount) * (maxHeight - minHeight);
+  };
+
+  // Function to calculate centered Y position for a node with new height
+  const calculateCenteredY = (originalNode, newHeight) => {
+    const originalCenterY = originalNode.y + originalNode.height / 2;
+    return originalCenterY - newHeight / 2;
   };
 
   // Unified Highlighting Functions
@@ -124,7 +132,7 @@ const BioDigitalSankeyApp = () => {
       }
     });
     
-    // Highlight nodes normally
+    // Highlight nodes with proportional heights
     currentGraph.current.nodes.forEach((n, nIndex) => {
       const matchingSystemsCount = n.systems.filter(nodeSystem => 
         targetSystemIds.includes(nodeSystem.name || JSON.stringify(nodeSystem))
@@ -135,18 +143,30 @@ const BioDigitalSankeyApp = () => {
         nodeElement
           .classed('node-dimmed', false)
           .classed('node-highlighted', true);
+
+        // Add blue overlay rectangle with height proportional to matching systems
+        const overlayHeight = calculateNodeHeight(matchingSystemsCount, globalMaxSystemCount.current);
+        const overlayY = calculateCenteredY(n, overlayHeight);
+        
+        d3.select('.nodes').append('rect')
+          .attr('class', 'node-overlay-blue')
+          .attr('data-node-overlay', nIndex)
+          .attr('x', n.x)
+          .attr('y', overlayY)
+          .attr('width', n.width)
+          .attr('height', overlayHeight)
+          .style('fill', d3.select(`[data-node-id="${nIndex}"]`).attr('fill')) // Keep original color for blue overlay
+          .style('pointer-events', 'none');
       }
     });
     
-    // Add dotted stroke to the clicked element
+    // Add dotted stroke to the clicked link
     if (clickedElement !== null) {
       if (isLink) {
-        // Add dotted stroke to the blue overlay link
         d3.select(`[data-original-link="${clickedElement}"].link-overlay-blue`)
           .classed('clicked-element', true);
       } else {
-        // Add dotted stroke to the clicked node
-        d3.select(`[data-node-id="${clickedElement}"]`)
+        d3.select(`[data-node-overlay="${clickedElement}"]`)
           .classed('clicked-element', true);
       }
     }
@@ -155,13 +175,14 @@ const BioDigitalSankeyApp = () => {
   const applyGreenHighlighting = useCallback((intersectionSystemIds) => {
     // Remove previous green overlays
     d3.selectAll('.link-overlay-green').remove();
-    d3.selectAll('.node rect').classed('node-additional', false);
+    d3.selectAll('.node-overlay-green').remove();
     
     // Add class to indicate green highlighting is active
     d3.select('body').classed('green-highlighting-active', true);
     
-    // Dim ALL blue overlay links and dotted outlines
+    // Dim ALL blue overlay links and blue overlay nodes
     d3.selectAll('.link-overlay-blue').classed('link-overlay-blue-dimmed', true);
+    d3.selectAll('.node-overlay-blue').classed('node-overlay-blue-dimmed', true);
     
     const linkGroup = d3.select('.links');
     
@@ -185,17 +206,29 @@ const BioDigitalSankeyApp = () => {
       }
     });
     
-    // Add green styling to nodes (no manual opacity changes)
+    // Add green overlay nodes
     currentGraph.current.nodes.forEach((n, nIndex) => {
       const nodeSystemIds = n.systems.map(s => s.name || JSON.stringify(s));
       const nodeIntersectionCount = nodeSystemIds.filter(id => intersectionSystemIds.includes(id)).length;
       
       if (nodeIntersectionCount > 0) {
-        const nodeElement = d3.select(`[data-node-id="${nIndex}"]`);
-        const isBlueHighlighted = nodeElement.classed('node-highlighted');
+        const hasBlueOverlay = d3.select(`[data-node-overlay="${nIndex}"]`).node();
         
-        if (isBlueHighlighted) {
-          nodeElement.classed('node-additional', true);
+        if (hasBlueOverlay) {
+
+          d3.select(`.node:nth-child(${nIndex + 1})`).attr('data-has-green-overlay', 'true');
+          // Add green overlay rectangle with height proportional to intersection systems
+          const greenOverlayHeight = calculateNodeHeight(nodeIntersectionCount, globalMaxSystemCount.current);
+          const greenOverlayY = calculateCenteredY(n, greenOverlayHeight);
+          
+          d3.select('.nodes').append('rect')
+            .attr('class', 'node-overlay node-overlay-green')
+            .attr('data-node-overlay-green', nIndex)
+            .attr('x', n.x)
+            .attr('y', greenOverlayY)
+            .attr('width', n.width)
+            .attr('height', greenOverlayHeight)
+            .style('pointer-events', 'none');
         }
       }
     });
@@ -226,7 +259,8 @@ const BioDigitalSankeyApp = () => {
 
   const unfreezeHighlight = useCallback(() => {
     d3.selectAll('.link-overlay').remove();
-    d3.selectAll('.clicked-link-indicator').remove(); // Add this line
+    d3.selectAll('.node-overlay').remove(); // Add this line
+    d3.selectAll('.clicked-link-indicator').remove();
     d3.selectAll('.clicked-element').classed('clicked-element', false);
     
     const allLinks = d3.selectAll('.link');
@@ -312,8 +346,9 @@ const BioDigitalSankeyApp = () => {
           resetHighlighting();
         } else {
           d3.selectAll('.link-overlay-green').remove();
-          d3.selectAll('.node rect').classed('node-additional', false);
+          d3.selectAll('.node-overlay-green').remove();
           d3.selectAll('.link-overlay-blue').classed('link-overlay-blue-dimmed', false);
+          d3.selectAll('.node-overlay-blue').classed('node-overlay-blue-dimmed', false); // Add this line
           // Remove green highlighting active class
           d3.select('body').classed('green-highlighting-active', false);
         }
@@ -523,7 +558,7 @@ const BioDigitalSankeyApp = () => {
         }
       });
       
-      // Highlight nodes
+      // Highlight nodes with proportional overlay rectangles
       currentGraph.current.nodes.forEach((node, nodeIndex) => {
         const matchingSystemsCount = node.systems.filter(nodeSystem => 
           targetSystemIds.includes(nodeSystem.name || JSON.stringify(nodeSystem))
@@ -532,6 +567,20 @@ const BioDigitalSankeyApp = () => {
         if (matchingSystemsCount > 0) {
           const nodeElement = d3.select(`[data-node-id="${nodeIndex}"]`);
           nodeElement.classed('node-dimmed', false).classed('node-highlighted', true);
+
+          // Add blue overlay rectangle with height proportional to matching systems
+          const overlayHeight = calculateNodeHeight(matchingSystemsCount, globalMaxSystemCount.current);
+          const overlayY = calculateCenteredY(node, overlayHeight);
+          
+          d3.select('.nodes').append('rect')
+            .attr('class', 'node-overlay node-overlay-blue temporary-highlight')
+            .attr('data-node-overlay', nodeIndex)
+            .attr('x', node.x)
+            .attr('y', overlayY)
+            .attr('width', node.width)
+            .attr('height', overlayHeight)
+            .style('fill', nodeElement.attr('fill')) // Keep original color for blue overlay
+            .style('pointer-events', 'none');
         }
       });
     }
@@ -547,7 +596,7 @@ const BioDigitalSankeyApp = () => {
       allLinks.classed('flow-additional', false);
       allNodes.classed('node-additional', false);
     } else {
-      // Remove temporary highlight overlays
+      // Remove temporary highlight overlays (both links and nodes)
       d3.selectAll('.temporary-highlight').remove();
       
       allLinks.classed('flow-dimmed', false);
@@ -890,18 +939,36 @@ const BioDigitalSankeyApp = () => {
     const columnWidth = availableWidth / Math.max(1, visibleColumns.length - 1);
     
     // Calculate max value for height scaling
-    const maxNodeValue = Math.max(...graph.nodes.map(n => n.value));
+    //const maxNodeValue = Math.max(...graph.nodes.map(n => n.value));
+    // Calculate max value for height scaling using ALL data (not just filtered)
+    const allSystemCounts = [];
+    data.forEach(system => {
+      allColumns.forEach(column => {
+        const values = normalizeToArray(system[column]);
+        values.forEach(value => {
+          const nodeId = `${column}-${value}`;
+          const existing = allSystemCounts.find(item => item.nodeId === nodeId);
+          if (existing) {
+            existing.count++;
+          } else {
+            allSystemCounts.push({ nodeId, count: 1 });
+          }
+        });
+      });
+    });
 
-    // Position nodes
+    const globalMaxNodeValue = Math.max(...allSystemCounts.map(item => item.count), 1);
+    globalMaxSystemCount.current = globalMaxNodeValue;
+
+    // Then use this for node height calculation:
     visibleColumns.forEach((column, columnIndex) => {
       const nodesInColumn = graph.nodes.filter(n => n.category === column);
       const totalHeight = height - margin.top - margin.bottom;
-      const minNodeSpacing = 3; // Minimum spacing between nodes
+      const minNodeSpacing = 3;
       
-      // Calculate total height needed for all nodes in this column
       let totalNodeHeight = 0;
       nodesInColumn.forEach(node => {
-        node.height = calculateNodeHeight(node.value, maxNodeValue);
+        node.height = calculateNodeHeight(node.value, globalMaxNodeValue); // Use global max
         totalNodeHeight += node.height;
       });
       

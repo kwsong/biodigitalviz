@@ -16,6 +16,7 @@
   --color-error-border: #fca5a5;
   --color-error-text: #dc2626;
   --color-highlight: #3b82f6;
+  --color-blue-dimmed: #c1d7f8;
   --color-dimmed: #cccccc;
   --color-green: #10b981;
   --color-green-dark: #059669;
@@ -263,26 +264,26 @@ body, html {
 }
 
 .link-overlay-blue-dimmed {
-  stroke: #c1d7f8 !important;
+  stroke: var(--color-blue-dimmed) !important;
   opacity: 1 !important;
 }
 
 /* Nodes */
 .node rect {
+  stroke-width: 0;
 }
 
+/* these should be gray...*/
 .node rect.node-highlighted {
-  fill: var(--color-highlight) !important;
-  opacity: 1 !important;
+  opacity: 0.3;
 }
 
 .node rect.node-dimmed {
-  fill: var(--color-dimmed) !important;
-  opacity: 0.3 !important;
+  opacity: 0.3;
 }
 
 .node rect.node-dimmed ~ text {
-  opacity: 0.3 !important;
+  opacity: 0.3;
 }
 
 .node rect.node-additional {
@@ -290,13 +291,33 @@ body, html {
   opacity: 1 !important;
 }
 
+.node-overlay-blue {
+  opacity: 1;
+  fill: var(--color-highlight) !important;
+}
+
+.node-overlay-blue-dimmed {
+  opacity: 1;
+  fill: var(--color-blue-dimmed) !important;
+}
+
+.node-overlay-green {
+  opacity: 0.8;
+  fill: var(--color-green) !important;
+}
+
 .green-highlighting-active .node rect.node-highlighted:not(.node-additional) {
+  opacity: 0.3;
+}
+
+/* Dim all blue highlighted node text in frozen mode */
+.green-highlighting-active .node rect.node-highlighted ~ text {
   opacity: 0.3 !important;
 }
 
-.green-highlighting-active .node rect.node-highlighted:not(.node-additional) ~ text {
-  fill: var(--color-highlight) !important;
-  opacity: 0.6 !important;
+/* Keep text bright for nodes that have green overlays - you'll need to add a class/attribute to identify these */
+.green-highlighting-active .node[data-has-green-overlay] rect.node-highlighted ~ text {
+  opacity: 1 !important;
 }
 
 /* Zoom controls */
@@ -367,18 +388,15 @@ body, html {
   opacity: 0.7;
 }
 
-.clicked-element {
-  stroke: var(--color-text-primary) !important;
-  stroke-width: 1px !important;
-  stroke-dasharray: 2,2 !important;
-}
 
 /* Clicked element indicator */
-.node rect.clicked-element {
-  stroke: var(--color-text-primary) !important;
-  stroke-width: 2px !important;
-  stroke-dasharray: 3,3 !important;
+.clicked-element {
+  stroke: var(--color-text-primary);
+  stroke-width: 4px !important;
+  stroke-dasharray: 2,2 !important;
   stroke-opacity: 1 !important;
+  opacity: 1 !important;
+  fill-opacity: 1 !important;
 }
 
 .clicked-link-outline {
